@@ -8,6 +8,7 @@ struct result {
 	std::string info;
 };
 
+// 水费管理类的声明
 class WaterManager
 {
 private:
@@ -22,12 +23,19 @@ public:
 	WaterManager();
 	~WaterManager();
 
-	result addStudent(const std::string& id, const std::string& name);
-	result addWaterRecord(const std::string& id, int year, int month, double usage);
-	result removeWaterRecord(const std::string& id, int year, int month);
-	result queryStudent(const std::string& id);
+	result getAllStudents(int* pageIndex, int count);
+	Student* queryStudent(const std::string& id);
+
+	result queryTotalRecord(const std::string& id);
 	result queryAllRecords(const std::string& id);
-	result getAllStudents(int pageIndex, int count);
+	result queryRecord(const std::string& id, int year, int month);
+
+	result addStudent(const std::string& id, const std::string& name);
+	result setStudent(const std::string& id, const std::string& name);
 	result removeStudent(const std::string& id);
+
+	result addWaterRecord(const std::string& id, int year, int month, double usage);
+	result setWaterRecord(const std::string& id, int year, int month, double usage);
+	result removeWaterRecord(const std::string& id, int year, int month);
 };
 

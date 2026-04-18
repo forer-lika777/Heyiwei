@@ -17,5 +17,6 @@ public:
 
 	double getTotalUsage() const;
 	double getTotalCost() const;
+	int getWaterRecordIndex(int year, int month);
 };
 
