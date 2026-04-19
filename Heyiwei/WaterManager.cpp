@@ -152,6 +152,18 @@ result WaterManager::addWaterRecord(const std::string& id, int year, int month, 
 	int index = findStudentIndex(id);
 	if (index == -1) 
 		return { false, "指定学号的学生不存在：" + id };
+
+	for (const auto& record : students[index].records) {
+		if (record.year == year && record.month == month) {
+			std::string info =
+				"学生 " + id + 
+				" 已存在 " + std::to_string(year) +
+				" 年 " + std::to_string(month) + 
+				" 月的水费记录，不能重复添加";
+			return { false, info };
+		}
+	}
+
 	double cost = usage * PRICE_PER_TON;
 	WaterRecord record{};
 	record.year = year;
@@ -218,7 +230,7 @@ result WaterManager::queryRecord(const std::string& id, int year, int month)
 }
 
 // 查询学生，返回指向学生的指针
-Student* WaterManager::queryStudent(const std::string& id) {
+Student* WaterManager::getStudent(const std::string& id) {
 	int index = findStudentIndex(id);
 	if (index == -1) return nullptr;
 	return &students[index];
@@ -242,15 +254,59 @@ result WaterManager::queryAllRecords(const std::string& id) {
 	return { true, info };
 }
 
+result WaterManager::getAllRecords(const std::string& id, int* pageIndex, int count) {
+	int index = findStudentIndex(id);
+	if (index == -1)
+		return { false, "指定学号的学生不存在：" + id };
+
+	auto& records = students[index].records;
+
+	if (records.empty()) {
+		return { true, "他暂时没有水费记录" };
+	}
+
+	int totalPages = (records.size() + count - 1) / count;
+
+	if (*pageIndex < 1) *pageIndex = 1;
+	if (*pageIndex > totalPages) *pageIndex = totalPages;
+	int pageMax = ((*pageIndex) * count >= records.size()) ? records.size() : (*pageIndex) * count;
+
+	std::string info =
+		"显示 " + std::to_string(records.size()) +
+		" 中的第 " + std::to_string(((*pageIndex) - 1) * count + 1) +
+		"~" + std::to_string(pageMax) +
+		"（页面序号 " + std::to_string(*pageIndex) + "）个水费记录：\n";
+
+	for (size_t i = ((*pageIndex) - 1) * count; i < pageMax; ++i)
+		info += 
+		"\n\t" + std::to_string(records[i].year) + 
+		"年" + std::to_string(records[i].month) + 
+		"月 \t使用量：" + std::to_string(records[i].usage) +
+		"（吨） \t计费：" + std::to_string(records[i].cost) + 
+		"（元）";
+
+	return { true, info };
+}
+
 // 获取所有学生信息
 result WaterManager::getAllStudents(int* pageIndex, int count) {
 	if (students.empty())
 		return { true, "当前暂无学生记录" };
+
 	int totalPages = (students.size() + count - 1) / count;
+
 	if (*pageIndex < 1) *pageIndex = 1;
 	if (*pageIndex > totalPages) *pageIndex = totalPages;
-	std::string info = "显示数量 " + std::to_string(count) + " （页面序号 " + std::to_string(*pageIndex) + "）名学生的信息：";
-	for (size_t i = (static_cast<size_t>(*pageIndex) - 1) * count; i < students.size(); ++i)
-		info += "\n  学号：" + students[i].id + " 姓名：" + students[i].name;
+	int pageMax = ((*pageIndex) * count >= students.size()) ? students.size() : (*pageIndex) * count;
+
+	std::string info = 
+		"显示 " + std::to_string(students.size()) + 
+		" 中的第 " + std::to_string(((*pageIndex) - 1) * count + 1) + 
+		"~" + std::to_string(pageMax) +
+		"（页面序号 " + std::to_string(*pageIndex) + "）名学生的信息：\n";
+	
+	for (size_t i = ((*pageIndex) - 1) * count; i < pageMax; ++i)
+		info += "\n\t学号：" + students[i].id + " \t姓名：" + students[i].name;
+
 	return { true, info };
 }

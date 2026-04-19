@@ -24,7 +24,8 @@ public:
 	~WaterManager();
 
 	result getAllStudents(int* pageIndex, int count);
-	Student* queryStudent(const std::string& id);
+	result getAllRecords(const std::string& id, int* paggeIndex, int count);
+	Student* getStudent(const std::string& id);
 
 	result queryTotalRecord(const std::string& id);
 	result queryAllRecords(const std::string& id);

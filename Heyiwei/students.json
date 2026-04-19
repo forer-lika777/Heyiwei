@@ -1,17 +1,140 @@
 [
     {
-        "id": "32",
-        "name": "16",
-        "records": []
+        "id": "sdf",
+        "name": "faeqwfefeswefw",
+        "records": [
+            {
+                "cost": 250.0,
+                "month": 12,
+                "usage": 100.0,
+                "year": 2027
+            }
+        ]
     },
     {
-        "id": "128",
-        "name": "傻逼",
-        "records": []
-    },
-    {
-        "id": "123",
-        "name": "d",
-        "records": []
+        "id": "1",
+        "name": "何意味",
+        "records": [
+            {
+                "cost": 5.0,
+                "month": 1,
+                "usage": 2.0,
+                "year": 561
+            },
+            {
+                "cost": 5.0,
+                "month": 1,
+                "usage": 2.0,
+                "year": 2026
+            },
+            {
+                "cost": 12.5,
+                "month": 2,
+                "usage": 5.0,
+                "year": 2026
+            },
+            {
+                "cost": 3140.0,
+                "month": 3,
+                "usage": 1256.0,
+                "year": 2026
+            },
+            {
+                "cost": 57.5,
+                "month": 4,
+                "usage": 23.0,
+                "year": 2026
+            },
+            {
+                "cost": 30.0,
+                "month": 5,
+                "usage": 12.0,
+                "year": 2026
+            },
+            {
+                "cost": 2.5,
+                "month": 6,
+                "usage": 1.0,
+                "year": 2026
+            },
+            {
+                "cost": 50.0,
+                "month": 7,
+                "usage": 20.0,
+                "year": 2026
+            },
+            {
+                "cost": 5.0,
+                "month": 8,
+                "usage": 2.0,
+                "year": 2026
+            },
+            {
+                "cost": 50.0,
+                "month": 9,
+                "usage": 20.0,
+                "year": 2026
+            },
+            {
+                "cost": 5.0,
+                "month": 10,
+                "usage": 2.0,
+                "year": 2026
+            },
+            {
+                "cost": 5.0,
+                "month": 11,
+                "usage": 2.0,
+                "year": 2026
+            },
+            {
+                "cost": 5.0,
+                "month": 12,
+                "usage": 2.0,
+                "year": 2026
+            },
+            {
+                "cost": 5.0,
+                "month": 1,
+                "usage": 2.0,
+                "year": 2027
+            },
+            {
+                "cost": 7.5,
+                "month": 2,
+                "usage": 3.0,
+                "year": 2027
+            },
+            {
+                "cost": 5.0,
+                "month": 3,
+                "usage": 2.0,
+                "year": 2027
+            },
+            {
+                "cost": 12.5,
+                "month": 4,
+                "usage": 5.0,
+                "year": 2027
+            },
+            {
+                "cost": 30.0,
+                "month": 5,
+                "usage": 12.0,
+                "year": 2027
+            },
+            {
+                "cost": 2.5,
+                "month": 6,
+                "usage": 1.0,
+                "year": 2027
+            },
+            {
+                "cost": 500.0,
+                "month": 1,
+                "usage": 200.0,
+                "year": 123
+            }
+        ]
     }
 ]
