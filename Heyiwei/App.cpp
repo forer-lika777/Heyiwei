@@ -45,7 +45,7 @@ void App::run()
 			continue;
 		}
 
-		if (operation <= -1 || operation >= 11) {
+		if (operation < 1 || operation > 2) {
 			std::cout << "输入的序号不在操作选项列表中 按下ENTER键重新输入\n";
 			std::getline(std::cin, input);
 			continue;
@@ -78,11 +78,11 @@ void App::listAllStudents(WaterManager& manager)
 
 		while (1) {
 			std::cout << "\n--------------------------------------\n";
-			std::cout << " 输入 n 进入下一页；\n";
-			std::cout << " 输入 p 进入上一页；\n";
-			std::cout << " 输入 数字 指定要查询的页数；\n";
-			std::cout << " 输入 s[学号] 对指定学号的学生执行操作\n";
-			std::cout << " 输入 exit 返回上一级；\n";
+			std::cout << "\tn\t进入下一页；\n";
+			std::cout << "\tp\t进入上一页；\n";
+			std::cout << "\t数字\t指定要查询的页数；\n";
+			std::cout << "\ts[学号]\t对指定学号的学生执行操作\n";
+			std::cout << "\texit\t返回上一级；\n";
 			std::cout << "--------------------------------------\n";
 			std::cout << "请输入操作标识：";
 			std::getline(std::cin, input);
@@ -326,7 +326,7 @@ void App::operateOnStudent(WaterManager& manager, const std::string id) {
 			listAllRecords(manager, id);
 			break;
 		case 2:
-
+			
 			break;
 		case 3:
 			addWaterRecord(manager, id);
