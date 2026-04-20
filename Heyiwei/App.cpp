@@ -211,6 +211,7 @@ void App::listAllRecords(WaterManager& manager, const std::string id)
 	}
 }
 
+// 对水费记录操作
 void App::operateOnRecord(WaterManager& manager, const std::string id, int year, int month)
 {
 	std::string input;
