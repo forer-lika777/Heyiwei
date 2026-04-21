@@ -128,14 +128,14 @@ int WaterManager::findStudentIndex(const std::string& id) {
 }
 
 // 添加学生
-result WaterManager::addStudent(const std::string& id, const std::string& name){
-	if (findStudentIndex(id) != -1)
-		return { false, "不能添加具有相同学号的学生（指定学号的学生已存在：" + id + "）" };
-	Student student;
-	student.id = id;
-	student.name = name;
+result WaterManager::addStudent(Student student){
+	if (findStudentIndex(student.id) != -1)
+		return { false, "不能添加具有相同学号的学生（指定学号的学生已存在：" + student.id + "）" };
+	Student s;
+	s.id = student.id;
+	s.name = student.name;
 	students.push_back(student);
-	return { true, "添加学生成功：" + id + " " + name};
+	return { true, "添加学生成功：" + s.id + " " + s.name};
 }
 
 // 移除学生
@@ -148,36 +148,31 @@ result WaterManager::removeStudent(const std::string& id) {
 }
 
 // 添加目标学生水费记录
-result WaterManager::addWaterRecord(const std::string& id, int year, int month, double usage) {
+result WaterManager::addWaterRecord(const std::string& id, const WaterRecord& record) {
 	int index = findStudentIndex(id);
 	if (index == -1) 
 		return { false, "指定学号的学生不存在：" + id };
 
-	for (const auto& record : students[index].records) {
-		if (record.year == year && record.month == month) {
+	for (const auto& r : students[index].records) {
+		if (r.year == record.year && r.month == record.month) {
 			std::string info =
 				"学生 " + id + 
-				" 已存在 " + std::to_string(year) +
-				" 年 " + std::to_string(month) + 
+				" 已存在 " + std::to_string(record.year) +
+				" 年 " + std::to_string(record.month) +
 				" 月的水费记录，不能重复添加";
 			return { false, info };
 		}
 	}
 
-	double cost = usage * PRICE_PER_TON;
-	WaterRecord record{};
-	record.year = year;
-	record.month = month;
-	record.usage = usage;
-	record.cost = cost;
+	double cost = record.usage * PRICE_PER_TON;
 
 	students[index].records.push_back(record);
 	std::string info =
 		"添加学生" + id + " 水费记录成功：" +
-		std::to_string(year) + " 年 " +
-		std::to_string(month) + " 月 共使用 " +
-		std::to_string(usage) + " 吨水，计费 " +
-		std::to_string(cost) + " 元";
+		std::to_string(record.year) + " 年 " +
+		std::to_string(record.month) + " 月 共使用 " +
+		std::to_string(record.usage) + " 吨水，计费 " +
+		std::to_string(record.cost) + " 元";
 	return { true, info };
 }
 

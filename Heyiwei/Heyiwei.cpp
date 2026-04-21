@@ -3,7 +3,8 @@
 
 int main()
 {
-    App app;
+    WaterManager waterManager;
+    App app(waterManager);
     app.run();
     return 0;
 }

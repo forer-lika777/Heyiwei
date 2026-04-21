@@ -31,11 +31,11 @@ public:
 	result queryAllRecords(const std::string& id);
 	result queryRecord(const std::string& id, int year, int month);
 
-	result addStudent(const std::string& id, const std::string& name);
+	result addStudent(Student student);
 	result setStudent(const std::string& id, const std::string& name);
 	result removeStudent(const std::string& id);
 
-	result addWaterRecord(const std::string& id, int year, int month, double usage);
+	result addWaterRecord(const std::string& id, const WaterRecord& record);
 	result setWaterRecord(const std::string& id, int year, int month, double usage);
 	result removeWaterRecord(const std::string& id, int year, int month);
 };
