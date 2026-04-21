@@ -1,5 +1,4 @@
 ﻿#include "App.h"
-#include <optional>
 #include <iostream>
 #include <string>
 #include "WaterManager.h"
@@ -11,6 +10,7 @@ static bool checkExit(std::string input) {
 
 void App::run()
 {
+	//程序开始运行的地方
 	std::cout << "========================================\n  欢迎使用学生水费管理系统\n";
 
 	while (1) {
@@ -20,15 +20,18 @@ void App::run()
 		std::cout << "\te.\t退出程序\n";
 		std::cout << "----------------------------------------\n";
 		std::cout << "\n输入操作标识：";
-
+ 
+		// 读取用户输入
 		std::string input;
 		std::getline(std::cin, input);
-
+  
+		// 判断是否输入了退出指令
 		if (checkExit(input)) {
 			std::cout << "程序即将退出\n";
 			return;
 		}
 
+		// 判断是否在扣问号
 		if (input == "?" || input == "？" || input == "." || input == "。") {
 			std::cout << input;
 			std::getline(std::cin, input);
@@ -37,14 +40,16 @@ void App::run()
 
 		int operation = 0;
 		try {
+			// 尝试将用户输入转换为数字。转换失败将进入 catch 内部
 			operation = std::stoi(input);
 		}
 		catch (...) {
 			std::cout << "你输的啥？ 按下ENTER键重新输入\n";
 			std::getline(std::cin, input);
-			continue;
+			continue; // 进入下一个循环，重新输入内容
 		}
 
+		// 判断输入的序号是否在操作选项列表内
 		if (operation < 1 || operation > 2) {
 			std::cout << "输入的序号不在操作选项列表中 按下ENTER键重新输入\n";
 			std::getline(std::cin, input);
@@ -64,14 +69,14 @@ void App::run()
 	}
 }
 
-int allStudentsPageIndex = 1;
+int allStudentsPageIndex = 1; // 全局变量，可用于保存上次查阅时的页面序号
 
 void App::listAllStudents()
 {
-	int* pageIndex = &allStudentsPageIndex;
+	int* pageIndex = &allStudentsPageIndex; // 使用指针
 	result res;
 	while (1) {
-		res = manager.getAllStudents(pageIndex, 16);
+		res = manager.getAllStudents(pageIndex, 16); // 传入页面索引的指针，调用的函数内部对索引的修改会反映在此。
 		std::cout << "\n--------------------------------------\n";
 		std::cout << res.info;
 		std::string input;
@@ -87,13 +92,16 @@ void App::listAllStudents()
 			std::cout << "请输入操作标识：";
 			std::getline(std::cin, input);
 
+			// 判断是否输入了空内容
 			if (input.empty()) {
 				std::cout << "请输入值";
 				continue;
 			}
 
+			// 判断是否输入了退出指令
 			if (checkExit(input)) return;
 
+			// 判断输入的 s[学号] 格式
 			if (input.length() >= 2 && (input[0] == 's' || input[0] == 'S')) {
 				std::string numStr = input.substr(1);
 				if (manager.getStudent(numStr) == nullptr) {
@@ -105,6 +113,7 @@ void App::listAllStudents()
 			}
 
 			try {
+				// 将输入的字符串转换为数字
 				*pageIndex = std::stoi(input);
 				break;
 			}
@@ -112,12 +121,12 @@ void App::listAllStudents()
 			}
 
 			if (input == "n" || input == "next" ) {
-				(*pageIndex)++;
+				(*pageIndex)++; // 下一页
 				break;
 			}
 
 			if (input == "p" || input == "previous") {
-				(*pageIndex)--;
+				(*pageIndex)--; // 上一页
 				break;
 			}
 
@@ -154,9 +163,11 @@ void App::listAllRecords(const std::string id)
 				std::cout << "请输入值";
 				continue;
 			}
-
+   
+			// 判断是否输入了退出指令
 			if (checkExit(input)) return;
-
+  
+			// 判断输入的 s[年-月] 格式
 			if (input.length() >= 2 && (input[0] == 's' || input[0] == 'S')) {
 				std::string dateStr = input.substr(1);
 
@@ -168,6 +179,7 @@ void App::listAllRecords(const std::string id)
 				}
 
 				try {
+					//尝试将输入的字符串转换为数字
 					int year = std::stoi(dateStr.substr(0, dashPos));
 					int month = std::stoi(dateStr.substr(dashPos + 1));
 
@@ -326,7 +338,7 @@ void App::operateOnStudent(const std::string id) {
 			listAllRecords(id);
 			break;
 		case 2:
-			
+			// 未完成
 			break;
 		case 3:
 			addWaterRecord(id);
@@ -472,11 +484,13 @@ static bool promptContinue() {
 
 void App::addWaterRecord()
 {
-	
+	WaterRecord record;
+	std::string id;
+
+	if (!enterWaterRecord(record) || !enterId(id)) return;
+
 	while (1) {
-
-
-		result res = manager.addWaterRecord(id, year, month, usage);
+		result res = manager.addWaterRecord(id, record);
 
 		if (res.success) {
 			std::cout << "\n" + res.info + "\n";
@@ -609,7 +623,7 @@ bool App::enterWaterRecord(WaterRecord& record)
 	record.year = year;
 	record.month = month;
 
-	return record;
+	return true;
 }
 
 void App::addWaterRecord(const std::string id)
@@ -710,7 +724,10 @@ void App::addWaterRecord(const std::string id)
 		}
 	}
 
-	result res = manager.addWaterRecord(id, year, month, usage);
+	WaterRecord record;
+	if (!enterWaterRecord(record)) return;
+
+	result res = manager.addWaterRecord(id, record);
 
 	if (res.success) {
 		std::cout << "\n" + res.info + "\n";
