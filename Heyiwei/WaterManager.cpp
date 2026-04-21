@@ -135,7 +135,24 @@ result WaterManager::addStudent(Student student){
 	s.id = student.id;
 	s.name = student.name;
 	students.push_back(student);
+	saveToFile();
 	return { true, "添加学生成功：" + s.id + " " + s.name};
+}
+
+// 设置学生姓名
+result WaterManager::setStudent(const std::string& id, const std::string& name)
+{
+	int index = findStudentIndex(id);
+	if (index == -1)
+		return { false, "失败。指定学号的学生不存在：" + id };
+	std::string oldname = students[index].name;
+	students[index].name = name;
+	std::string info =
+		"成功设置 " + id +
+		" 学生的姓名为：" + name +
+		"（旧值：" + oldname + "）";
+	saveToFile();
+	return { true, info };
 }
 
 // 移除学生
@@ -144,6 +161,7 @@ result WaterManager::removeStudent(const std::string& id) {
 	if (index == -1)
 		return { false, "指定学号的学生不存在：" + id };
 	students.erase(students.begin() + index);
+	saveToFile();
 	return { true, "删除成功" };
 }
 
@@ -173,6 +191,7 @@ result WaterManager::addWaterRecord(const std::string& id, const WaterRecord& re
 		std::to_string(record.month) + " 月 共使用 " +
 		std::to_string(record.usage) + " 吨水，计费 " +
 		std::to_string(record.cost) + " 元";
+	saveToFile();
 	return { true, info };
 }
 
@@ -186,6 +205,7 @@ result WaterManager::setWaterRecord(const std::string& id, int year, int month, 
 		if (it->year == year && it->month == month) {
 			it->usage = usage;
 			it->cost = usage * PRICE_PER_TON;
+			saveToFile();
 			return { true , "修改记录成功\n  " + queryTotalRecord(id).info };
 		}
 		++it;
@@ -201,6 +221,7 @@ result WaterManager::removeWaterRecord(const std::string& id, int year, int mont
 	if (r == -1) 
 		return { false, "未找到记录：" + std::to_string(year) + " 年 " + std::to_string(month) + " 月" };
 	students[index].records.erase(students[index].records.begin() + r);
+	saveToFile();
 	return { true, "删除成功" };
 }
 
@@ -213,15 +234,8 @@ result WaterManager::queryTotalRecord(const std::string& id) {
 		" 姓名：" + students[index].name + 
 		" 总用水量：" + std::to_string(students[index].getTotalUsage()) + 
 		" 总消费：" + std::to_string(students[index].getTotalCost());
+	saveToFile();
 	return { true, info };
-}
-
-result WaterManager::queryRecord(const std::string& id, int year, int month)
-{
-	int index = findStudentIndex(id);
-	if (index == -1)
-		return { false, "指定学号的学生不存在：" + id };
-	
 }
 
 // 查询学生，返回指向学生的指针
@@ -229,24 +243,6 @@ Student* WaterManager::getStudent(const std::string& id) {
 	int index = findStudentIndex(id);
 	if (index == -1) return nullptr;
 	return &students[index];
-}
-
-result WaterManager::queryAllRecords(const std::string& id) {
-	int index = findStudentIndex(id);
-	if (index == -1)
-		return { false, "指定学号的学生不存在：" + id };
-	std::string info = "学号 " + students[index].id + " 学生的详细水费记录：";
-	for (const auto& record : students[index].records) {
-		std::string recordStr =
-			std::to_string(record.year) + "年" +
-			std::to_string(record.month) + "月 记录 - 用水量：" +
-			std::to_string(record.usage) + "吨 计费：" +
-			std::to_string(record.cost);
-		info += "\n" + recordStr;
-	}
-	if (students[index].records.empty())
-		info += "\n暂无水费记录";
-	return { true, info };
 }
 
 result WaterManager::getAllRecords(const std::string& id, int* pageIndex, int count) {

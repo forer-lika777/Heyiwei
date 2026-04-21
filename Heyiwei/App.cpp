@@ -276,12 +276,20 @@ void App::operateOnRecord(const std::string id, int year, int month)
 			continue;
 		}
 
+		result res;
+
 		switch (operation) {
 		case 1:
-			
+			setWaterRecord(id, year, month);
 			break;
 		case 2:
-
+			std::cout << "确定要移除这个吗？(yes/no)";
+			std::getline(std::cin, input);
+			if (input == "yes") {
+				res = manager.removeStudent(id);
+				std::cout << res.info + "\n";
+				return;
+			}
 			break;
 		}
 	}
@@ -338,7 +346,7 @@ void App::operateOnStudent(const std::string id) {
 			listAllRecords(id);
 			break;
 		case 2:
-			// 未完成
+			setName(id);
 			break;
 		case 3:
 			addWaterRecord(id);
@@ -358,46 +366,25 @@ void App::operateOnStudent(const std::string id) {
 	}
 }
 
-void App::listTotalRecord()
+void App::setName(const std::string id) {
+	std::string name;
+	if (!enterName(name)) return;
+	result res = manager.setStudent(id, name);
+	std::cout << res.info;
+}
+
+void App::setWaterRecord(const std::string id, int year, int month)
 {
-	while (1) {
-		std::cout << "--------------------------------------\n";
-		std::cout << "\t学号\t查询信息；\n";
-		std::cout << "\texit\t返回上一级；\n"; 
-		std::cout << "--------------------------------------\n";
-		std::cout << "请输入操作标识：";
-		std::string input;
-		std::getline(std::cin, input);
-
-		if (checkExit(input)) return;
-
-		if (input.empty()) {
-			std::cout << "请输入值\n";
-			continue;
-		}
-
-		Student* student = manager.getStudent(input);
-		if (student == nullptr) {
-			std::cout << "查询失败。原因：找不到目标学号的学生\n按下ENTER键以继续\n";
-			std::getline(std::cin, input);
-			continue;
-		}
-
-		std::cout << 
-			"学号：" + (*student).id +
-			" 姓名：" + (*student).name +
-			"  总用水量：" + std::to_string((*student).getTotalUsage()) +
-			" 吨，总消费：" + std::to_string((*student).getTotalCost()) + " 元\n";
-
-		std::cout << "按下ENTER键以继续\n";
-		std::getline(std::cin, input);
-	}
+	double usage;
+	if (!enterUsage(usage)) return;
+	result res = manager.setWaterRecord(id, year, month, usage);
+	std::cout << res.info;
 }
 
 void App::addStudent() {
 	Student student;
 	while (1) {
-		if (!enterStudent(student)) continue;
+		if (!enterStudent(student)) return;
 
 		result res = manager.addStudent(student);
 		if (!res.success) {
@@ -412,18 +399,21 @@ void App::addStudent() {
 }
 
 bool App::enterStudent(Student& student) {
+
 	std::cout << "--------------------------------------\n";
 	std::cout << "\t学号和姓名\t添加学生；\n";
 	std::cout << "\texit\t在中途取消操作；\n";
 	std::cout << "--------------------------------------\n";
 
-	std::string id, name;
+	std::string id;
+	if (!enterId(id)) return false;
 
-	if (!enterId(id) || !enterName(name)) return false;
+	std::string name;
+	if (!enterName(name)) return false;
 
-	Student student;
 	student.id = id;
 	student.name = name;
+
 	return true;
 }
 
@@ -448,6 +438,7 @@ bool App::enterId(std::string& id)
 		continue;
 	}
 
+	id = input;
 	return true;
 }
 
@@ -472,33 +463,103 @@ bool App::enterName(std::string& name)
 	return true;
 }
 
-static bool promptContinue() {
+bool App::enterYear(int& year) {
 	std::string input;
-
-	std::cout << "\n--------------------------------------\n 按 ENTER 键继续添加操作；\n 输入 exit 返回上一级；\n--------------------------------------\n";
-	std::cout << "请输入标识：";
-	std::getline(std::cin, input);
-
-	return (input == "e" || input == "exit" || input == "exit()") ? false : true;
-}
-
-void App::addWaterRecord()
-{
-	WaterRecord record;
-	std::string id;
-
-	if (!enterWaterRecord(record) || !enterId(id)) return;
-
 	while (1) {
-		result res = manager.addWaterRecord(id, record);
+		std::cout << "\n请输入年份：";
+		std::getline(std::cin, input);
 
-		if (res.success) {
-			std::cout << "\n" + res.info + "\n";
+		if (checkExit(input)) return false;
+
+		if (input.empty()) {
+			std::cout << "你需要输入一些内容，或输入 exit 取消添加操作\n";
+			continue;
 		}
-		else {
-			std::cout << "添加记录失败：" + res.info + "\n";
+
+		try {
+			year = std::stoi(input);
+
+			if (year <= 0) return false;
+
+			if (year <= 1900)
+				std::cout << "哥们真是个古人\n";
+			else if (year <= 2000)
+				std::cout << "哥们真是活在上个世纪的人\n";
+
+			auto now = std::time(nullptr);
+			std::tm localTimeStruct;
+			auto* localTime = &localTimeStruct;
+#if defined(_MSC_VER)
+			localtime_s(localTime, &now);
+#else
+			localtime_r(&now, localTime);
+#endif
+			int currentYear = localTime->tm_year + 1900;
+
+			if (year > currentYear)
+				std::cout << "哥们真是从未来穿越回来的人\n";
+
+			break;
+		}
+		catch (const std::exception&) {
+			std::cout << "你输入的年份不合法\n";
+			continue;
 		}
 	}
+	return true;
+}
+
+bool App::enterMonth(int& month) {
+	std::string input;
+	while (1) {
+		std::cout << "\n请输入月份：";
+		std::getline(std::cin, input);
+
+		if (checkExit(input)) return false;
+
+		if (input.empty()) {
+			std::cout << "你需要输入一些内容，或输入 exit 取消添加操作\n";
+			continue;
+		}
+
+		try {
+			month = std::stoi(input);
+			if (month >= 1 && month <= 12) break;
+		}
+		catch (...) {
+			std::cout << "请输入一个有效数字\n";
+			continue;
+		}
+
+		std::cout << "你输入的月份不合法\n";
+	}
+	return true;
+}
+
+bool App::enterUsage(double& usage) {
+	std::string input;
+	while (1) {
+		std::cout << "\n请输入用水量（吨数）：";
+		std::getline(std::cin, input);
+
+		if (checkExit(input)) return false;
+
+		if (input.empty()) {
+			std::cout << "你需要输入一些内容，或输入 exit 取消添加操作\n";
+			continue;
+		}
+
+		try {
+			usage = std::stoi(input);
+			if (usage < 0) throw;
+			break;
+		}
+		catch (...) {
+			std::cout << "你输入的数据不合法\n";
+			continue;
+		}
+	}
+	return true;
 }
 
 bool App::enterWaterRecord(WaterRecord& record)
@@ -506,233 +567,47 @@ bool App::enterWaterRecord(WaterRecord& record)
 	std::string input;
 
 	std::cout << "--------------------------------------\n";
-	std::cout << " 输入学号，然后添加水费记录；\n";
-	std::cout << " 输入 exit 返回上一级；\n";
+	std::cout << "\t学号\t添加水费记录；\n";
+	std::cout << "\texit\t返回上一级；\n";
 	std::cout << "--------------------------------------\n";
 
-	std::string id;
 	int year, month;
 	double usage;
 
-	while (1) {
-		std::cout << "请输入操作标识：";
-		std::getline(std::cin, input);
+	if (!enterYear(year)) return false;
+	if (!enterMonth(month)) return false;
+	if (!enterUsage(usage)) return false;
 
-		if (checkExit(input)) return "";
-
-		if (input.empty()) {
-			std::cout << "你需要输入一些内容，或输入 exit 取消添加操作\n";
-			continue;
-		}
-		Student* student = manager.getStudent(input);
-		if (student != nullptr) break;
-		std::cout << "添加失败。原因：找不到目标学号的学生\n";
-	}
-
-	id = input;
-
-	while (1) {
-		std::cout << "\n请输入年份：";
-		std::getline(std::cin, input);
-
-		if (checkExit(input)) return;
-
-		if (input.empty()) {
-			std::cout << "你需要输入一些内容，或输入 exit 取消添加操作\n";
-			continue;
-		}
-
-		try {
-			year = std::stoi(input);
-
-			if (year <= 0) throw;
-
-			if (year <= 1900)
-				std::cout << "哥们真是个古人\n";
-			else if (year <= 2000)
-				std::cout << "哥们真是活在上个世纪的人\n";
-
-			auto now = std::time(nullptr);
-			std::tm localTimeStruct;
-			auto* localTime = &localTimeStruct;
-#if defined(_MSC_VER)
-			localtime_s(localTime, &now);
-#else
-			localtime_r(&now, localTime);
-#endif
-			int currentYear = localTime->tm_year + 1900;
-
-			if (year > currentYear)
-				std::cout << "哥们真是从未来穿越回来的人\n";
-
-			break;
-		}
-		catch (const std::exception&) {
-			std::cout << "你输入的年份不合法\n";
-			continue;
-		}
-	}
-
-	while (1) {
-		std::cout << "\n请输入月份：";
-		std::getline(std::cin, input);
-
-		if (checkExit(input)) return;
-
-		if (input.empty()) {
-			std::cout << "你需要输入一些内容，或输入 exit 取消添加操作\n";
-			continue;
-		}
-
-		try {
-			month = std::stoi(input);
-			if (month >= 1 && month <= 12) break;
-		}
-		catch (...) {
-			std::cout << "请输入一个有效数字\n";
-			continue;
-		}
-
-		std::cout << "你输入的月份不合法\n";
-	}
-
-	while (1) {
-		std::cout << "\n请输入用水量（吨数）：";
-		std::getline(std::cin, input);
-
-		if (checkExit(input)) return;
-
-		if (input.empty()) {
-			std::cout << "你需要输入一些内容，或输入 exit 取消添加操作\n";
-			continue;
-		}
-
-		try {
-			usage = std::stoi(input);
-			if (usage < 0) throw;
-			break;
-		}
-		catch (...) {
-			std::cout << "你输入的数据不合法\n";
-			continue;
-		}
-	}
-
-	WaterRecord record;
-	record.usage = usage;
 	record.year = year;
 	record.month = month;
+	record.usage = usage;
+	record.cost = usage * PRICE_PER_TON;
 
 	return true;
 }
 
+bool App::promptContinue() {
+	std::string input;
+
+	std::cout << "\n--------------------------------------\n";
+	std::cout << "\t按下ENTER\t继续添加操作；\n";
+	std::cout << "\texit\t返回上一级；\n";
+	std::cout << "--------------------------------------\n";
+	std::cout << "请输入标识：";
+	std::getline(std::cin, input);
+
+	return (input == "e" || input == "exit" || input == "exit()") ? false : true;
+}
+
 void App::addWaterRecord(const std::string id)
 {
-	std::string input;
-	int year, month;
-	double usage;
-
 	while (1) {
-		std::cout << "为 " + id + " 添加水费记录";
+		WaterRecord record;
+		if (!enterWaterRecord(record)) return;
 
-		std::cout << "\n请输入年份：";
-		std::getline(std::cin, input);
+		result res = manager.addWaterRecord(id, record);
+		std::cout << (res.success ? "成功：" : "失败：") << res.info << "\n";
 
-		if (checkExit(input)) return;
-
-		if (input.empty()) {
-			std::cout << "你需要输入一些内容，或输入 exit 取消添加操作\n";
-			continue;
-		}
-
-		try {
-			year = std::stoi(input);
-
-			if (year <= 0) {
-				std::cout << "你输入的年份不合法\n";
-				continue;
-			}
-
-			if (year <= 1900)
-				std::cout << "哥们真是个古人\n";
-			else if (year <= 2000)
-				std::cout << "哥们真是活在上个世纪的人\n";
-
-			auto now = std::time(nullptr);
-			std::tm localTimeStruct;
-			auto* localTime = &localTimeStruct;
-#if defined(_MSC_VER)
-			localtime_s(localTime, &now);
-#else
-			localtime_r(&now, localTime);
-#endif
-			int currentYear = localTime->tm_year + 1900;
-
-			if (year > currentYear)
-				std::cout << "哥们真是从未来穿越回来的人\n";
-
-			break;
-		}
-		catch (const std::exception&) {
-			std::cout << "你输入的年份不合法\n";
-			continue;
-		}
-	}
-
-	while (1) {
-		std::cout << "\n请输入月份：";
-		std::getline(std::cin, input);
-
-		if (checkExit(input)) return;
-
-		if (input.empty()) {
-			std::cout << "你需要输入一些内容，或输入 exit 取消添加操作\n";
-			continue;
-		}
-
-		try {
-			month = std::stoi(input);
-			if (month >= 1 && month <= 12) break;
-		}
-		catch (...) {
-			std::cout << "请输入一个有效数字\n";
-			continue;
-		}
-
-		std::cout << "你输入的月份不合法\n";
-	}
-
-	while (1) {
-		std::cout << "\n请输入用水量（吨数）：";
-		std::getline(std::cin, input);
-
-		if (checkExit(input)) return;
-
-		if (input.empty()) {
-			std::cout << "你需要输入一些内容，或输入 exit 取消添加操作\n";
-			continue;
-		}
-
-		try {
-			usage = std::stoi(input);
-			if (usage < 0) throw;
-			break;
-		}
-		catch (...) {
-			std::cout << "你输入的数据不合法\n";
-			continue;
-		}
-	}
-
-	WaterRecord record;
-	if (!enterWaterRecord(record)) return;
-
-	result res = manager.addWaterRecord(id, record);
-
-	if (res.success) {
-		std::cout << "\n" + res.info + "\n";
-	}
-	else {
-		std::cout << "添加记录失败：" + res.info + "\n";
+		if (!promptContinue()) return;
 	}
 }

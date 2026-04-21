@@ -28,8 +28,6 @@ public: // 外部函数可以调用部分
 	Student* getStudent(const std::string& id);
 
 	result queryTotalRecord(const std::string& id);
-	result queryAllRecords(const std::string& id);
-	result queryRecord(const std::string& id, int year, int month);
 
 	result addStudent(Student student);
 	result setStudent(const std::string& id, const std::string& name);
