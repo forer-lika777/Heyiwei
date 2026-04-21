@@ -110,13 +110,58 @@ void WaterManager::saveToFile()
 void WaterManager::loadFromFile()
 {
 	std::ifstream file("students.json");
-	if (!file.is_open())
+	if (!file.is_open()) return;
+
+	// 检查文件是否为空
+	file.seekg(0, std::ios::end);
+	if (file.tellg() == 0)
 	{
+		std::cerr << "警告：students.json 内容是空的\n";
+		file.close();
 		return;
 	}
-	json j;
-	file >> j;
-	students = j.get<std::vector<Student>>();
+	file.seekg(0, std::ios::beg);
+
+	try
+	{
+		json j;
+		file >> j;
+		students = j.get<std::vector<Student>>();
+		std::cerr << "成功加载 " << students.size() << " 条学生记录\n";
+	}
+	catch (const json::parse_error& e)
+	{
+		// JSON 解析失败（格式错误）
+		std::cerr << "从文件加载数据时发生了错误\n";
+		std::cerr << "错误：students.json 解析失败，文件可能已损坏\n";
+		std::cerr << "原因：" << e.what() << '\n';
+		std::cerr << "将新建数据运行。原文件已被保存至：students.json.bak\n";
+
+		file.close();
+
+		// 备份解析失败的文件
+		if (std::rename("students.json", "students.json.bak") != 0)
+			std::cerr << "失败：无法备份文件。原数据将被覆盖\n";
+
+		students.clear(); // 使用空数据
+	}
+	catch (const json::type_error& e)
+	{
+		// JSON 类型不匹配（比如字段类型错了）
+		std::cerr << "从文件加载数据时发生了错误\n";
+		std::cerr << "错误：students.json 数据类型错误  ";
+		std::cerr << "原因：" << e.what() << '\n';
+		std::cerr << "将新建数据运行\n";
+		students.clear();
+	}
+	catch (const std::exception& e)
+	{
+		// 其他异常
+		std::cerr << "从文件加载数据时发生了错误\n";
+		std::cerr << "加载 students.json 时发生了未知异常  ";
+		std::cerr << "原因：" << e.what() << '\n';
+		students.clear();
+	}
 }
 
 // 依据学号查找目标学生索引
@@ -182,8 +227,6 @@ result WaterManager::addWaterRecord(const std::string& id, const WaterRecord& re
 		}
 	}
 
-	double cost = record.usage * PRICE_PER_TON;
-
 	students[index].records.push_back(record);
 	std::string info =
 		"添加学生" + id + " 水费记录成功：" +
@@ -210,6 +253,7 @@ result WaterManager::setWaterRecord(const std::string& id, int year, int month, 
 		}
 		++it;
 	}
+	return { false, "修改失败" };
 }
 
 // 移除目标学生目标月份的水费记录
@@ -234,7 +278,6 @@ result WaterManager::queryTotalRecord(const std::string& id) {
 		" 姓名：" + students[index].name + 
 		" 总用水量：" + std::to_string(students[index].getTotalUsage()) + 
 		" 总消费：" + std::to_string(students[index].getTotalCost());
-	saveToFile();
 	return { true, info };
 }
 

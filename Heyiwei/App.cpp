@@ -11,15 +11,17 @@ static bool checkExit(std::string input) {
 void App::run()
 {
 	//程序开始运行的地方
-	std::cout << "========================================\n  欢迎使用学生水费管理系统\n";
+	std::cout << "===================================================\n";
+	std::cout << "  欢迎使用学生水费管理系统\n";
 
 	while (1) {
-		std::cout << "----------------------------------------\n 根据以下标识输入操作：\n";
+		std::cout << "---------------------------------------------------\n";
+		std::cout << " 根据以下标识输入操作：\n";
 		std::cout << "\t1.\t列出所有学生信息\n";
 		std::cout << "\t2.\t添加学生\n";
 		std::cout << "\te.\t退出程序\n";
-		std::cout << "----------------------------------------\n";
-		std::cout << "\n输入操作标识：";
+		std::cout << "---------------------------------------------------\n\n";
+		std::cout << "请输入操作标识：";
  
 		// 读取用户输入
 		std::string input;
@@ -77,18 +79,18 @@ void App::listAllStudents()
 	result res;
 	while (1) {
 		res = manager.getAllStudents(pageIndex, 16); // 传入页面索引的指针，调用的函数内部对索引的修改会反映在此。
-		std::cout << "\n--------------------------------------\n";
+		std::cout << "---------------------------------------------------\n";
 		std::cout << res.info;
 		std::string input;
 
 		while (1) {
-			std::cout << "\n--------------------------------------\n";
+			std::cout << "\n---------------------------------------------------\n";
 			std::cout << "\tn\t进入下一页；\n";
 			std::cout << "\tp\t进入上一页；\n";
 			std::cout << "\t数字\t指定要查询的页数；\n";
 			std::cout << "\ts[学号]\t对指定学号的学生执行操作\n";
 			std::cout << "\texit\t返回上一级；\n";
-			std::cout << "--------------------------------------\n";
+			std::cout << "---------------------------------------------------\n\n";
 			std::cout << "请输入操作标识：";
 			std::getline(std::cin, input);
 
@@ -144,18 +146,18 @@ void App::listAllRecords(const std::string id)
 
 	while (1) {
 		res = manager.getAllRecords(id, pageIndex, 16);
-		std::cout << "\n--------------------------------------\n";
+		std::cout << "\n---------------------------------------------------\n";
 		std::cout << res.info;
 		std::string input;
 
 		while (1) {
-			std::cout << "\n--------------------------------------\n";
+			std::cout << "\n---------------------------------------------------\n";
 			std::cout << "\tn\t进入下一页；\n";
 			std::cout << "\tp\t进入上一页；\n";
 			std::cout << "\t数字\t指定要查询的页数；\n";
 			std::cout << "\ts[年-月]\t对指定月份的记录执行操作\n";
 			std::cout << "\texit\t返回上一级；\n";
-			std::cout << "--------------------------------------\n";
+			std::cout << "---------------------------------------------------\n\n";
 			std::cout << "请输入操作标识：";
 			std::getline(std::cin, input);
 
@@ -243,13 +245,13 @@ void App::operateOnRecord(const std::string id, int year, int month)
 			std::to_string(month) + " 月的水费记录  " +
 			std::to_string(student->records[index].usage) + " （吨） " +
 			std::to_string(student->records[index].cost) + " （元）\n";
-		std::cout << "----------------------------------------\n";
+		std::cout << "---------------------------------------------------\n";
 		std::cout << " 根据以下标识输入操作：\n";
 		std::cout << "\t1.\t设置这个水费记录\n";
 		std::cout << "\t2.\t移除这个水费记录\n";
 		std::cout << "\te.\t返回上一级\n";
-		std::cout << "----------------------------------------\n";
-		std::cout << "\n输入操作标识：";
+		std::cout << "---------------------------------------------------\n\n";
+		std::cout << "输入操作标识：";
 
 		std::getline(std::cin, input);
 
@@ -286,7 +288,7 @@ void App::operateOnRecord(const std::string id, int year, int month)
 			std::cout << "确定要移除这个吗？(yes/no)";
 			std::getline(std::cin, input);
 			if (input == "yes") {
-				res = manager.removeStudent(id);
+				res = manager.removeWaterRecord(id, year, month);
 				std::cout << res.info + "\n";
 				return;
 			}
@@ -304,15 +306,15 @@ void App::operateOnStudent(const std::string id) {
 	}
 	while (1) {
 		std::cout << "\n 学号：" + id + " 姓名：" + student->name + "\n";
-		std::cout << "----------------------------------------\n";
+		std::cout << "---------------------------------------------------\n";
 		std::cout << " 根据以下标识输入操作：\n";
 		std::cout << "\t1.\t查询他的所有水费记录\n";
 		std::cout << "\t2.\t设置他的姓名\n";
 		std::cout << "\t3.\t添加他的水费记录\n";
 		std::cout << "\t4.\t移除他\n";
 		std::cout << "\te.\t返回上一级\n";
-		std::cout << "----------------------------------------\n";
-		std::cout << "\n输入操作标识：";
+		std::cout << "---------------------------------------------------\n\n";
+		std::cout << "输入操作标识：";
 
 		std::getline(std::cin, input);
 
@@ -400,10 +402,10 @@ void App::addStudent() {
 
 bool App::enterStudent(Student& student) {
 
-	std::cout << "--------------------------------------\n";
+	std::cout << "---------------------------------------------------\n";
 	std::cout << "\t学号和姓名\t添加学生；\n";
 	std::cout << "\texit\t在中途取消操作；\n";
-	std::cout << "--------------------------------------\n";
+	std::cout << "---------------------------------------------------\n\n";
 
 	std::string id;
 	if (!enterId(id)) return false;
@@ -550,7 +552,7 @@ bool App::enterUsage(double& usage) {
 		}
 
 		try {
-			usage = std::stoi(input);
+			usage = std::stod(input);
 			if (usage < 0) throw;
 			break;
 		}
@@ -566,10 +568,10 @@ bool App::enterWaterRecord(WaterRecord& record)
 {
 	std::string input;
 
-	std::cout << "--------------------------------------\n";
+	std::cout << "---------------------------------------------------\n";
 	std::cout << "\t学号\t添加水费记录；\n";
 	std::cout << "\texit\t返回上一级；\n";
-	std::cout << "--------------------------------------\n";
+	std::cout << "---------------------------------------------------\n";
 
 	int year, month;
 	double usage;
@@ -589,10 +591,10 @@ bool App::enterWaterRecord(WaterRecord& record)
 bool App::promptContinue() {
 	std::string input;
 
-	std::cout << "\n--------------------------------------\n";
+	std::cout << "\n---------------------------------------------------\n";
 	std::cout << "\t按下ENTER\t继续添加操作；\n";
 	std::cout << "\texit\t返回上一级；\n";
-	std::cout << "--------------------------------------\n";
+	std::cout << "---------------------------------------------------\n";
 	std::cout << "请输入标识：";
 	std::getline(std::cin, input);
 
