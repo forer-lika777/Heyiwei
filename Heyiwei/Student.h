@@ -9,7 +9,7 @@ struct WaterRecord {
 	double cost;
 };
 
-class Student {
+class Student { // class默认为private，struct默认为public 功能上相等
 public:
 	std::string id;
 	std::string name;

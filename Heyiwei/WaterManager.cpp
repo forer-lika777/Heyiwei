@@ -1,6 +1,6 @@
 #include "WaterManager.h"
 #include <iostream>
-#include <fstream>
+#include <fstream> // 读写文件
 #include <string>
 #include "json.hpp"
 #include "Windows.h"
@@ -47,7 +47,7 @@ std::string utf8ToGbk(const std::string& utf8Str) {
 }
 
 // 读取、写入水费记录数据
-static void to_json(json& j, const WaterRecord& r)
+static void to_json(json& j, const WaterRecord& r) // 建立一个静态函数，此函数只在当前文件里面生效
 {
 	j = json{
 		{"year", r.year},
