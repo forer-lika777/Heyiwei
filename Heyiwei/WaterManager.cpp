@@ -145,7 +145,7 @@ void WaterManager::loadFromFile()
 
 		students.clear(); // 使用空数据
 	}
-	catch (const json::type_error&s e)
+	catch (const json::type_error& e)
 	{
 		// JSON 类型不匹配（比如字段类型错了）
 		std::cerr << "从文件加载数据时发生了错误\n";
