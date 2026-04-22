@@ -19,7 +19,7 @@ void App::run()
 		std::cout << " 根据以下标识输入操作：\n";
 		std::cout << "\t1.\t列出所有学生信息\n";
 		std::cout << "\t2.\t添加学生\n";
-		std::cout << "\t/exit.\t退出程序\n";
+		std::cout << "\t/exit\t退出程序\n";
 		std::cout << "---------------------------------------------------\n\n";
 		std::cout << "请输入操作标识：";
  
@@ -35,8 +35,7 @@ void App::run()
 
 		// 判断是否在扣问号
 		if (input == "?" || input == "？" || input == "." || input == "。") {
-			std::cout << input;
-			std::getline(std::cin, input);
+			std::cout << input + "\n";
 			continue;
 		}
 
@@ -46,15 +45,13 @@ void App::run()
 			operation = std::stoi(input);
 		}
 		catch (...) {
-			std::cout << "你输的啥？ 按下ENTER键重新输入\n";
-			std::getline(std::cin, input);
+			std::cout << "你输的啥？\n";
 			continue; // 进入下一个循环，重新输入内容
 		}
 
 		// 判断输入的序号是否在操作选项列表内
 		if (operation < 1 || operation > 2) {
-			std::cout << "输入的序号不在操作选项列表中 按下ENTER键重新输入\n";
-			std::getline(std::cin, input);
+			std::cout << "输入的序号不在操作选项列表中\n";
 			continue;
 		}
 
@@ -96,7 +93,7 @@ void App::listAllStudents()
 
 			// 判断是否输入了空内容
 			if (input.empty()) {
-				std::cout << "请输入值";
+				std::cout << "你需要输入一些内容，或输入 exit 返回上一级";
 				continue;
 			}
 
@@ -162,7 +159,7 @@ void App::listAllRecords(const std::string id)
 			std::getline(std::cin, input);
 
 			if (input.empty()) {
-				std::cout << "请输入值";
+				std::cout << "你需要输入一些内容，或输入 exit 返回上一级";
 				continue;
 			}
    
@@ -249,7 +246,7 @@ void App::operateOnRecord(const std::string id, int year, int month)
 		std::cout << " 根据以下标识输入操作：\n";
 		std::cout << "\t1.\t设置这个水费记录\n";
 		std::cout << "\t2.\t移除这个水费记录\n";
-		std::cout << "\t/exit.\t返回上一级\n";
+		std::cout << "\t/exit\t返回上一级\n";
 		std::cout << "---------------------------------------------------\n\n";
 		std::cout << "输入操作标识：";
 
@@ -312,7 +309,7 @@ void App::operateOnStudent(const std::string id) {
 		std::cout << "\t2.\t设置他的姓名\n";
 		std::cout << "\t3.\t添加他的水费记录\n";
 		std::cout << "\t4.\t移除他\n";
-		std::cout << "\t/exit.\t返回上一级\n";
+		std::cout << "\t/exit\t返回上一级\n";
 		std::cout << "---------------------------------------------------\n\n";
 		std::cout << "输入操作标识：";
 
@@ -569,7 +566,7 @@ bool App::enterWaterRecord(WaterRecord& record)
 	std::string input;
 
 	std::cout << "---------------------------------------------------\n";
-	std::cout << "\t学号\t添加水费记录；\n";
+	std::cout << "\t年、月、用水量\t添加水费记录；\n";
 	std::cout << "\t/exit\t返回上一级；\n";
 	std::cout << "---------------------------------------------------\n";
 
@@ -598,7 +595,7 @@ bool App::promptContinue() {
 	std::cout << "请输入标识：";
 	std::getline(std::cin, input);
 
-	return checkExit(input);
+	return !checkExit(input);
 }
 
 void App::addWaterRecord(const std::string id)
