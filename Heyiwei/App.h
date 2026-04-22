@@ -1,11 +1,11 @@
-#pragma once
+ï»¿#pragma once
 #include "WaterManager.h"
 
 class App
 {
 private:
 	WaterManager& manager;
-	const double PRICE_PER_TON = 2.5; // ¶¨Òå³£Á¿Ë®·Ñ
+	const double PRICE_PER_TON = 2.5; // å®šä¹‰å¸¸é‡æ°´è´¹
 public:
 	App(WaterManager& mgr) : manager(mgr) {}
 	void run();
