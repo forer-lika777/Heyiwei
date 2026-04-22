@@ -3,6 +3,6 @@
 何意味
 
 ```mermaid
-  graph TD;
-    A[开始] --> B[结束];
+graph TD;
+    A-->B;
 ```
