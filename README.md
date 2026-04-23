@@ -2,7 +2,7 @@
 
 何意味
 
-### 摘要
+## 摘要
 
 这是一个使用 Visual C++ 编写的学生水费管理系统。使用的开发工具为：Visual studio 2022 （编译环境）、Visual studio code。
 
@@ -17,7 +17,7 @@
 5.  添加、删除水费记录
 6.  查询特定年月份的水费记录
 
-### 设计技术
+## 设计技术
 
 *  **结构体和类储存学生数据。** `Student` 和 `WaterRecord` 定义数据结构。
    数据结构样式：
@@ -50,9 +50,9 @@
 
 *  **灵活的指针与引用操作。** 向其他函数传递对象的指针或引用，数据操作方便高效。
 
-### 结构图
+## 结构图
 
-#### 总流程图
+### 总流程图
 
 ```mermaid
 flowchart TD
@@ -78,7 +78,159 @@ flowchart TD
     operate_record --> delete_record[删除水费记录]
 ```
 
-##### `addStudent()` 方法
+## 类型
+
+### App 类
+
+#### 声明
+
+```cpp
+#pragma once
+#include "WaterManager.h"
+
+class App
+{
+private:
+	WaterManager& manager;
+	const double PRICE_PER_TON = 2.5; // 定义常量水费
+public:
+	App(WaterManager& mgr) : manager(mgr) {}
+	void run();
+	void listAllStudents();
+	void listAllRecords(const std::string id);
+
+	void addStudent();
+	void addWaterRecord(const std::string id);
+
+	void operateOnStudent(const std::string id);
+	void operateOnRecord(const std::string id, int year, int month);
+
+	void setName(const std::string id);
+	void setWaterRecord(const std::string id, int year, int month);
+
+	bool promptContinue();
+	bool enterWaterRecord(WaterRecord& record);
+	bool enterStudent(Student& student);
+	bool enterId(std::string& id);
+	bool enterName(std::string& name);
+	bool enterYear(int& year);
+	bool enterMonth(int& month);
+	bool enterUsage(double& usage);
+};
+```
+
+#### 方法列表
+
+##### `App.run()` 方法
+
+展示主菜单列表。
+输入标识选择操作功能。
+
+源代码：
+
+```cpp
+void App::run()
+{
+	//程序开始运行的地方
+	std::cout << "===================================================\n";
+	std::cout << "  欢迎使用学生水费管理系统\n";
+
+	while (1) {
+		std::cout << "---------------------------------------------------\n";
+		std::cout << " 根据以下标识输入操作：\n";
+		std::cout << "\t1.\t列出所有学生信息\n";
+		std::cout << "\t2.\t添加学生\n";
+		std::cout << "\t/exit\t退出程序\n";
+		std::cout << "---------------------------------------------------\n\n";
+		std::cout << "请输入操作标识：";
+ 
+		// 读取用户输入
+		std::string input;
+		std::getline(std::cin, input);
+  
+		// 判断是否输入了退出指令
+		if (checkExit(input)) {
+			std::cout << "程序即将退出\n";
+			return;
+		}
+
+		// 判断是否在扣问号
+		if (input == "?" || input == "？" || input == "." || input == "。") {
+			std::cout << input + "\n";
+			continue;
+		}
+
+		int operation = 0;
+		try {
+			// 尝试将用户输入转换为数字。转换失败将进入 catch 内部
+			operation = std::stoi(input);
+		}
+		catch (...) {
+			std::cout << "你输的啥？\n";
+			continue; // 进入下一个循环，重新输入内容
+		}
+
+		// 判断输入的序号是否在操作选项列表内
+		if (operation < 1 || operation > 2) {
+			std::cout << "输入的序号不在操作选项列表中\n";
+			continue;
+		}
+
+		std::cout << "\n";
+
+		switch (operation) {
+		case 1:
+			listAllStudents();
+			break;
+		case 2:
+			addStudent();
+			break;
+		}
+	}
+}
+```
+
+流程图：
+
+```mermaid
+flowchart TD
+	start["App.run()"] --> entry[输入标识]
+	entry --> |1| list_all_students["列出所有学生列表<br/>listAllStudents()"]
+	entry --> |2| add_student["添加学生<br/>addStudent()"]
+	entry --> |/exit| exit[退出函数]
+	entry -.-> |其他| prompt_error[提示错误]
+	prompt_error --> entry
+```
+
+---
+
+##### `App.addStudent()` 方法
+
+展示添加学生菜单列表。
+输入学号和姓名添加学生，或输入 `/exit` 标识取消添加操作。
+
+源代码：
+
+```cpp
+void App::addStudent() {
+	Student student;
+	while (1) {
+		if (!enterStudent(student)) return;
+
+		result res = manager.addStudent(student);
+		if (!res.success) {
+			std::cout << "添加失败！原因：" << res.info;
+		}
+		else {
+			std::cout << "添加成功：" << res.info;
+		}
+
+		if (!promptContinue()) return;
+	}
+}
+```
+
+流程图：
 
 ```mermaid
 flowchart LR
@@ -94,7 +246,84 @@ flowchart LR
     enter_name -.-> |"/exit"| exit_function
 ```
 
+---
+
 ##### `listAllStudents()` 方法
+
+展示所有学生列表。
+输入标识或页码翻阅页面浏览，或输入 s[序号] 查找选择学生。
+
+源代码：
+
+```cpp
+int allStudentsPageIndex = 1; // 全局变量，可用于保存上次查阅时的页面序号
+
+void App::listAllStudents()
+{
+	int* pageIndex = &allStudentsPageIndex; // 使用指针
+	result res;
+	while (1) {
+		res = manager.getAllStudents(pageIndex, 16); // 传入页面索引的指针，调用的函数内部对索引的修改会反映在此。
+		std::cout << "---------------------------------------------------\n";
+		std::cout << res.info;
+		std::string input;
+
+		while (1) {
+			std::cout << "\n---------------------------------------------------\n";
+			std::cout << "\tn\t进入下一页；\n";
+			std::cout << "\tp\t进入上一页；\n";
+			std::cout << "\t数字\t指定要查询的页数；\n";
+			std::cout << "\ts[学号]\t对指定学号的学生执行操作\n";
+			std::cout << "\t/exit\t返回上一级；\n";
+			std::cout << "---------------------------------------------------\n\n";
+			std::cout << "请输入操作标识：";
+			std::getline(std::cin, input);
+
+			// 判断是否输入了空内容
+			if (input.empty()) {
+				std::cout << "你需要输入一些内容，或输入 exit 返回上一级";
+				continue;
+			}
+
+			// 判断是否输入了退出指令
+			if (checkExit(input)) return;
+
+			// 判断输入的 s[学号] 格式
+			if (input.length() >= 2 && (input[0] == 's' || input[0] == 'S')) {
+				std::string numStr = input.substr(1);
+				if (manager.getStudent(numStr) == nullptr) {
+					std::cout << "\n没有找到指定学号的学生\n";
+					break;
+				}
+				operateOnStudent(numStr);
+				break;
+			}
+
+			try {
+				// 将输入的字符串转换为数字
+				*pageIndex = std::stoi(input);
+				break;
+			}
+			catch (...) {
+			}
+
+			if (input == "n" || input == "next" ) {
+				(*pageIndex)++; // 下一页
+				break;
+			}
+
+			if (input == "p" || input == "previous") {
+				(*pageIndex)--; // 上一页
+				break;
+			}
+
+			std::cout << "你输入的标识不合法";
+		}
+	}
+}
+```
+
+流程图：
 
 ```mermaid
 flowchart TD
@@ -115,7 +344,186 @@ flowchart TD
     operate_on_student --> get_students
 ```
 
+---
+
+##### `listAllRecords(const std::string id)` 方法
+
+展示所有水费记录列表。
+输入标识或页码翻阅页面浏览，或输入 s[年-月] 查找选择记录 。
+
+源代码：
+
+```cpp
+int allRecordsPageIndex = 1;
+
+void App::listAllRecords(const std::string id)
+{
+	int* pageIndex = &allRecordsPageIndex;
+	result res;
+
+	while (1) {
+		res = manager.getAllRecords(id, pageIndex, 16);
+		std::cout << "\n---------------------------------------------------\n";
+		std::cout << res.info;
+		std::string input;
+
+		while (1) {
+			std::cout << "\n---------------------------------------------------\n";
+			std::cout << "\tn\t进入下一页；\n";
+			std::cout << "\tp\t进入上一页；\n";
+			std::cout << "\t数字\t指定要查询的页数；\n";
+			std::cout << "\ts[年-月]\t对指定月份的记录执行操作\n";
+			std::cout << "\t/exit\t返回上一级；\n";
+			std::cout << "---------------------------------------------------\n\n";
+			std::cout << "请输入操作标识：";
+			std::getline(std::cin, input);
+
+			if (input.empty()) {
+				std::cout << "你需要输入一些内容，或输入 exit 返回上一级";
+				continue;
+			}
+   
+			// 判断是否输入了退出指令
+			if (checkExit(input)) return;
+  
+			// 判断输入的 s[年-月] 格式
+			if (input.length() >= 2 && (input[0] == 's' || input[0] == 'S')) {
+				std::string dateStr = input.substr(1);
+
+				// 解析年-月格式
+				size_t dashPos = dateStr.find('-');
+				if (dashPos == std::string::npos) {
+					std::cout << "格式错误，请使用 年-月 格式，例如：s2026-04";
+					continue;
+				}
+
+				try {
+					//尝试将输入的字符串转换为数字
+					int year = std::stoi(dateStr.substr(0, dashPos));
+					int month = std::stoi(dateStr.substr(dashPos + 1));
+
+					// 验证年月有效性
+					if (year < 1 || month < 1 || month > 12) {
+						std::cout << "年份或月份无效";
+						continue;
+					}
+
+					// 调用操作指定月份记录的函数
+					operateOnRecord(id, year, month);
+
+					// 操作完成后刷新当前页面
+					break;
+				}
+				catch (...) {
+					std::cout << "年月格式不正确，请使用数字";
+					continue;
+				}
+			}
+
+			try {
+				*pageIndex = std::stoi(input);
+				break;
+			}
+			catch (...) {
+			}
+
+			if (input == "n" || input == "next") {
+				(*pageIndex)++;
+				break;
+			}
+
+			if (input == "p" || input == "previous") {
+				(*pageIndex)--;
+				break;
+			}
+
+			std::cout << "你输入的标识不合法";
+		}
+	}
+}
+```
+
 ##### `operateOnStudent(const std::string id)` 方法
+
+对单个学生执行操作。
+输入指定标识查看所有水费记录、设置姓名、添加水费记录、移除学生。
+
+源代码：
+
+```cpp
+void App::operateOnStudent(const std::string id) {
+	std::string input;
+	auto* student = manager.getStudent(id);
+	if (student == nullptr) {
+		std::cout << "没有找到目标学号的学生";
+		return;
+	}
+	while (1) {
+		std::cout << "\n 学号：" + id + " 姓名：" + student->name + "\n";
+		std::cout << "---------------------------------------------------\n";
+		std::cout << " 根据以下标识输入操作：\n";
+		std::cout << "\t1.\t查询他的所有水费记录\n";
+		std::cout << "\t2.\t设置他的姓名\n";
+		std::cout << "\t3.\t添加他的水费记录\n";
+		std::cout << "\t4.\t移除他\n";
+		std::cout << "\t/exit\t返回上一级\n";
+		std::cout << "---------------------------------------------------\n\n";
+		std::cout << "输入操作标识：";
+
+		std::getline(std::cin, input);
+
+		if (checkExit(input)) return;
+
+		if (input.empty()) {
+			std::cout << "你需要输入一些内容，或输入 exit 返回上一级\n";
+			continue;
+		}
+
+		int operation = 0;
+		try {
+			operation = std::stoi(input);
+		}
+		catch (...) {
+			std::cout << "你输的啥？ 按下ENTER键重新输入\n";
+			std::getline(std::cin, input);
+			continue;
+		}
+
+		if (operation < 1 || operation > 4) {
+			std::cout << "输入的序号不在操作选项列表中 按下ENTER键重新输入\n";
+			std::getline(std::cin, input);
+			continue;
+		}
+
+		result res;
+
+		switch (operation) {
+		case 1:
+			listAllRecords(id);
+			break;
+		case 2:
+			setName(id);
+			break;
+		case 3:
+			addWaterRecord(id);
+			break;
+		case 4:
+			std::cout << "确定要移除他吗？(yes/no)";
+			std::getline(std::cin, input);
+			if (input == "yes") {
+				res = manager.removeStudent(id);
+				std::cout << res.info + "\n";
+				return;
+			}
+			else {
+				std::cout << "已取消移除操作";
+			}
+		}
+	}
+}
+```
+
+流程图：
 
 ```mermaid
 flowchart TD
@@ -139,7 +547,7 @@ flowchart TD
     confirm --> |no| entry
 ```
 
-#### 管理类的部分逻辑
+---
 
 ##### `addStudent(Student student)` 方法
 
@@ -155,6 +563,8 @@ flowchart LR
 
     add_student --> exit
 ```
+
+---
 
 ##### `loadFromFile()` 方法
 
@@ -181,9 +591,9 @@ flowchart LR
 
 ```
 
-### 代码展示
+## 代码展示
 
-#### `App.cpp` 文件
+### `App.cpp` 文件
 
 ```cpp
 #include <iostream>
