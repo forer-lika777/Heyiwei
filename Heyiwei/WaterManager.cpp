@@ -113,10 +113,10 @@ void WaterManager::loadFromFile()
 	if (!file.is_open()) return;
 
 	// 检查文件是否为空
-	file.seekg(0, std::ios::end);
-	if (file.tellg() == 0)
+	file.seekg(0, std::ios::end); // seekg函数：寻找读取位置，（a，b），a+b即为开始位置
+	if (file.tellg() == 0) // 报告位置
 	{
-		std::cerr << "警告：students.json 内容是空的\n";
+		std::cerr << "警告：students.json 内容是空的\n"; // cerr函数:在程序运行出现错误时能够发出报告
 		file.close();
 		return;
 	}
@@ -126,7 +126,7 @@ void WaterManager::loadFromFile()
 	{
 		json j;
 		file >> j;
-		students = j.get<std::vector<Student>>();
+		students = j.get<std::vector<Student>>(); // 将j里面的数据转化为与student相同格式传给student
 		std::cerr << "成功加载 " << students.size() << " 条学生记录\n";
 	}
 	catch (const json::parse_error& e)
@@ -152,7 +152,7 @@ void WaterManager::loadFromFile()
 		std::cerr << "错误：students.json 数据类型错误  ";
 		std::cerr << "原因：" << e.what() << '\n';
 		std::cerr << "将新建数据运行\n";
-		students.clear();
+		students.clear(); // 清楚所有元素
 	}
 	catch (const std::exception& e)
 	{
@@ -179,12 +179,9 @@ result WaterManager::addStudent(Student student){
 	
 	if (student.id[0] =='/' || student.name[0] == '/')
 		return { false, "学号和姓名不能以 / 开头，因为它是程序的指令标识符" };
-	Student s;
-	s.id = student.id;
-	s.name = student.name;
 	students.push_back(student);
 	saveToFile();
-	return { true, "添加学生成功：" + s.id + " " + s.name};
+	return { true, "添加学生成功：" + student.id + " " + student.name};
 }
 
 // 设置学生姓名
@@ -208,7 +205,7 @@ result WaterManager::removeStudent(const std::string& id) {
 	int index = findStudentIndex(id);
 	if (index == -1)
 		return { false, "指定学号的学生不存在：" + id };
-	students.erase(students.begin() + index);
+	students.erase(students.begin() + index); // 清除指定数据
 	saveToFile();
 	return { true, "删除成功" };
 }
