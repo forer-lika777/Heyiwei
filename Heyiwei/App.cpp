@@ -8,6 +8,7 @@ static bool checkExit(std::string input) {
 	return false;
 }
 
+/// @brief 展示主菜单列表。输入标识选择操作功能。
 void App::run()
 {
 	//程序开始运行的地方
@@ -70,6 +71,7 @@ void App::run()
 
 int allStudentsPageIndex = 1; // 全局变量，可用于保存上次查阅时的页面序号
 
+/// @brief 展示所有学生列表。输入标识或页码翻阅页面浏览，或输入 s[序号] 查找选择学生。
 void App::listAllStudents()
 {
 	int* pageIndex = &allStudentsPageIndex; // 使用指针
@@ -136,6 +138,8 @@ void App::listAllStudents()
 
 int allRecordsPageIndex = 1;
 
+/// @brief 展示所有水费记录列表。输入标识或页码翻阅页面浏览，或输入 s[年-月] 查找选择记录。
+/// @param id 学生学号
 void App::listAllRecords(const std::string id)
 {
 	int* pageIndex = &allRecordsPageIndex;
@@ -222,6 +226,10 @@ void App::listAllRecords(const std::string id)
 	}
 }
 
+/// @brief 对指定月份的水费记录执行操作
+/// @param id 学生学号
+/// @param year 年份
+/// @param month 月份
 void App::operateOnRecord(const std::string id, int year, int month)
 {
 	std::string input;
@@ -294,6 +302,8 @@ void App::operateOnRecord(const std::string id, int year, int month)
 	}
 }
 
+/// @brief 对单个学生执行操作。输入指定标识查看所有水费记录、设置姓名、添加水费记录、移除学生。
+/// @param id 学生学号
 void App::operateOnStudent(const std::string id) {
 	std::string input;
 	auto* student = manager.getStudent(id);
@@ -365,6 +375,8 @@ void App::operateOnStudent(const std::string id) {
 	}
 }
 
+/// @brief 设置指定学生的名字
+/// @param id 学生学号
 void App::setName(const std::string id) {
 	std::string name;
 	if (!enterName(name)) return;
@@ -372,6 +384,10 @@ void App::setName(const std::string id) {
 	std::cout << res.info;
 }
 
+/// @brief 设置指定学生在指定年月的水费记录
+/// @param id 学生学号
+/// @param year 年份
+/// @param month 月份
 void App::setWaterRecord(const std::string id, int year, int month)
 {
 	double usage;
@@ -380,6 +396,7 @@ void App::setWaterRecord(const std::string id, int year, int month)
 	std::cout << res.info;
 }
 
+/// @brief 展示添加学生菜单列表。输入学号和姓名添加学生，或输入 `/exit` 标识取消添加操作。
 void App::addStudent() {
 	Student student;
 	while (1) {
@@ -397,6 +414,9 @@ void App::addStudent() {
 	}
 }
 
+/// @brief 输入学生信息
+/// @param student 学生对象
+/// @return 是否输入成功
 bool App::enterStudent(Student& student) {
 
 	std::cout << "---------------------------------------------------\n";
@@ -416,6 +436,9 @@ bool App::enterStudent(Student& student) {
 	return true;
 }
 
+/// @brief 输入学生学号
+/// @param id 学号
+/// @return 是否输入成功
 bool App::enterId(std::string& id)
 {
 	std::string input;
@@ -441,6 +464,9 @@ bool App::enterId(std::string& id)
 	return true;
 }
 
+/// @brief 输入学生姓名
+/// @param name 姓名
+/// @return 是否输入成功
 bool App::enterName(std::string& name)
 {
 	std::string input;
@@ -462,6 +488,9 @@ bool App::enterName(std::string& name)
 	return true;
 }
 
+/// @brief 输入年份
+/// @param year 年份
+/// @return 是否输入成功
 bool App::enterYear(int& year) {
 	std::string input;
 	while (1) {
@@ -508,6 +537,9 @@ bool App::enterYear(int& year) {
 	return true;
 }
 
+/// @brief 输入月份
+/// @param month 月份
+/// @return 是否输入成功
 bool App::enterMonth(int& month) {
 	std::string input;
 	while (1) {
@@ -535,6 +567,9 @@ bool App::enterMonth(int& month) {
 	return true;
 }
 
+/// @brief 输入用水量
+/// @param usage 用水量
+/// @return 是否输入成功
 bool App::enterUsage(double& usage) {
 	std::string input;
 	while (1) {
@@ -561,6 +596,9 @@ bool App::enterUsage(double& usage) {
 	return true;
 }
 
+/// @brief 输入水费记录
+/// @param record 水费记录对象
+/// @return 是否输入成功
 bool App::enterWaterRecord(WaterRecord& record)
 {
 	std::string input;
@@ -585,6 +623,8 @@ bool App::enterWaterRecord(WaterRecord& record)
 	return true;
 }
 
+/// @brief 提示是否继续
+/// @return 是否继续
 bool App::promptContinue() {
 	std::string input;
 
@@ -598,6 +638,8 @@ bool App::promptContinue() {
 	return !checkExit(input);
 }
 
+/// @brief 添加水费记录
+/// @param id 学号
 void App::addWaterRecord(const std::string id)
 {
 	while (1) {
