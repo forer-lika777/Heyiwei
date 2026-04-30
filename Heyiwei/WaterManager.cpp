@@ -179,6 +179,7 @@ result WaterManager::addStudent(Student student){
 	
 	if (student.id[0] =='/' || student.name[0] == '/')
 		return { false, "学号和姓名不能以 / 开头，因为它是程序的指令标识符" };
+
 	students.push_back(student);
 	saveToFile();
 	return { true, "添加学生成功：" + student.id + " " + student.name};
@@ -190,6 +191,10 @@ result WaterManager::setStudent(const std::string& id, const std::string& name)
 	int index = findStudentIndex(id);
 	if (index == -1)
 		return { false, "失败。指定学号的学生不存在：" + id };
+
+	if (name[0] == '/')
+		return { false, "姓名不能以 / 开头，因为它是程序的指令标识符" };
+
 	std::string oldname = students[index].name;
 	students[index].name = name;
 	std::string info =
@@ -296,7 +301,7 @@ result WaterManager::getAllRecords(const std::string& id, int* pageIndex, int co
 	auto& records = students[index].records;
 
 	if (records.empty()) {
-		return { true, "他暂时没有水费记录" };
+		return { true, " 他暂时还没有水费记录" };
 	}
 
 	int totalPages = (records.size() + count - 1) / count;

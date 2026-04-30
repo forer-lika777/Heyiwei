@@ -4,8 +4,14 @@
 #include "App.h"
 
 static bool checkExit(std::string input) {
-	if (input == "/exit" || input == "/e") return true;
+	if (input == "/e" || input == "/exit") return true;
 	return false;
+}
+
+static bool checkEmpty(std::string input) {
+	if (input.empty())
+		std::cout << "你需要输入一些内容，或输入 /e 取消操作\n";
+	return input.empty();
 }
 
 /// @brief 展示主菜单列表。输入标识选择操作功能。
@@ -13,14 +19,14 @@ void App::run()
 {
 	//程序开始运行的地方
 	std::cout << "===================================================\n";
-	std::cout << "  欢迎使用学生水费管理系统\n";
+	std::cout << "  欢迎使用学生水费管理系统";
 
 	while (1) {
-		std::cout << "---------------------------------------------------\n";
+		std::cout << "\n\n---------------------------------------------------\n";
 		std::cout << " 根据以下标识输入操作：\n";
 		std::cout << "\t1.\t列出所有学生信息\n";
 		std::cout << "\t2.\t添加学生\n";
-		std::cout << "\t/exit\t退出程序\n";
+		std::cout << "\t/e\t退出程序\n";
 		std::cout << "---------------------------------------------------\n\n";
 		std::cout << "请输入操作标识：";
  
@@ -30,13 +36,13 @@ void App::run()
   
 		// 判断是否输入了退出指令
 		if (checkExit(input)) {
-			std::cout << "程序即将退出\n";
+			std::cout << "程序即将退出";
 			return;
 		}
 
 		// 判断是否在扣问号
 		if (input == "?" || input == "？" || input == "." || input == "。") {
-			std::cout << input + "\n";
+			std::cout << input;
 			continue;
 		}
 
@@ -46,13 +52,13 @@ void App::run()
 			operation = std::stoi(input);
 		}
 		catch (...) {
-			std::cout << "你输的啥？\n";
+			std::cout << "请输入一个有效标识";
 			continue; // 进入下一个循环，重新输入内容
 		}
 
 		// 判断输入的序号是否在操作选项列表内
 		if (operation < 1 || operation > 2) {
-			std::cout << "输入的序号不在操作选项列表中\n";
+			std::cout << "输入的序号不在操作选项列表中";
 			continue;
 		}
 
@@ -77,27 +83,24 @@ void App::listAllStudents()
 	int* pageIndex = &allStudentsPageIndex; // 使用指针
 	result res;
 	while (1) {
-		res = manager.getAllStudents(pageIndex, 16); // 传入页面索引的指针，调用的函数内部对索引的修改会反映在此。
-		std::cout << "---------------------------------------------------\n";
+		res = manager.getAllStudents(pageIndex, 12); // 传入页面索引的指针，调用的函数内部对索引的修改会反映在此。
+		std::cout << "\n---------------------------------------------------\n";
 		std::cout << res.info;
 		std::string input;
 
 		while (1) {
-			std::cout << "\n---------------------------------------------------\n";
+			std::cout << "\n\n---------------------------------------------------\n";
 			std::cout << "\tn\t进入下一页；\n";
 			std::cout << "\tp\t进入上一页；\n";
 			std::cout << "\t数字\t指定要查询的页数；\n";
 			std::cout << "\ts[学号]\t对指定学号的学生执行操作\n";
-			std::cout << "\t/exit\t返回上一级；\n";
+			std::cout << "\t/e\t返回上一级；\n";
 			std::cout << "---------------------------------------------------\n\n";
 			std::cout << "请输入操作标识：";
 			std::getline(std::cin, input);
 
 			// 判断是否输入了空内容
-			if (input.empty()) {
-				std::cout << "你需要输入一些内容，或输入 exit 返回上一级";
-				continue;
-			}
+			if (checkEmpty(input)) continue;
 
 			// 判断是否输入了退出指令
 			if (checkExit(input)) return;
@@ -106,7 +109,7 @@ void App::listAllStudents()
 			if (input.length() >= 2 && (input[0] == 's' || input[0] == 'S')) {
 				std::string numStr = input.substr(1);
 				if (manager.getStudent(numStr) == nullptr) {
-					std::cout << "\n没有找到指定学号的学生\n";
+					std::cout << "\n没有找到指定学号的学生：" + numStr;
 					break;
 				}
 				operateOnStudent(numStr);
@@ -131,7 +134,7 @@ void App::listAllStudents()
 				break;
 			}
 
-			std::cout << "你输入的标识不合法";
+			std::cout << "请输入一个有效标识";
 		}
 	}
 }
@@ -146,26 +149,23 @@ void App::listAllRecords(const std::string id)
 	result res;
 
 	while (1) {
-		res = manager.getAllRecords(id, pageIndex, 16);
+		res = manager.getAllRecords(id, pageIndex, 12);
 		std::cout << "\n---------------------------------------------------\n";
 		std::cout << res.info;
 		std::string input;
 
 		while (1) {
-			std::cout << "\n---------------------------------------------------\n";
+			std::cout << "\n\n---------------------------------------------------\n";
 			std::cout << "\tn\t进入下一页；\n";
 			std::cout << "\tp\t进入上一页；\n";
 			std::cout << "\t数字\t指定要查询的页数；\n";
 			std::cout << "\ts[年-月]\t对指定月份的记录执行操作\n";
-			std::cout << "\t/exit\t返回上一级；\n";
+			std::cout << "\t/e\t返回上一级；\n";
 			std::cout << "---------------------------------------------------\n\n";
 			std::cout << "请输入操作标识：";
 			std::getline(std::cin, input);
 
-			if (input.empty()) {
-				std::cout << "你需要输入一些内容，或输入 exit 返回上一级";
-				continue;
-			}
+			if (checkEmpty(input)) continue;
    
 			// 判断是否输入了退出指令
 			if (checkExit(input)) return;
@@ -221,7 +221,7 @@ void App::listAllRecords(const std::string id)
 				break;
 			}
 
-			std::cout << "你输入的标识不合法";
+			std::cout << "请输入一个有效标识";
 		}
 	}
 }
@@ -245,40 +245,37 @@ void App::operateOnRecord(const std::string id, int year, int month)
 	}
 	while (1) {
 		std::cout <<
-			"\n 学号：" + id +
+			"\n\n 学号：" + id + " 姓名：" + 
+			student->name +" 在 " +
 			std::to_string(year) + " 年 " +
-			std::to_string(month) + " 月的水费记录  " +
-			std::to_string(student->records[index].usage) + " （吨） " +
-			std::to_string(student->records[index].cost) + " （元）\n";
+			std::to_string(month) + " 月的水费记录：\n 用水量：" +
+			std::to_string(student->records[index].usage) + "（吨），计费：" +
+			std::to_string(student->records[index].cost) + "（元）\n";
 		std::cout << "---------------------------------------------------\n";
 		std::cout << " 根据以下标识输入操作：\n";
 		std::cout << "\t1.\t设置这个水费记录\n";
 		std::cout << "\t2.\t移除这个水费记录\n";
-		std::cout << "\t/exit\t返回上一级\n";
+		std::cout << "\t/e\t返回上一级\n";
 		std::cout << "---------------------------------------------------\n\n";
 		std::cout << "输入操作标识：";
 
 		std::getline(std::cin, input);
 
-		if (checkExit(input)) return;
+		if (checkEmpty(input)) continue;
 
-		if (input.empty()) {
-			std::cout << "你需要输入一些内容，或输入 exit 返回上一级\n";
-			continue;
-		}
+		if (checkExit(input)) return;
 
 		int operation = 0;
 		try {
 			operation = std::stoi(input);
 		}
 		catch (...) {
-			std::cout << "你输的啥？ 按下ENTER键重新输入\n";
-			std::getline(std::cin, input);
+			std::cout << "请输入一个有效标识";
 			continue;
 		}
 
 		if (operation < 1 || operation > 2) {
-			std::cout << "输入的序号不在操作选项列表中 按下ENTER键重新输入\n";
+			std::cout << "输入的序号不在操作选项列表中 按下ENTER键重新输入";
 			std::getline(std::cin, input);
 			continue;
 		}
@@ -294,8 +291,11 @@ void App::operateOnRecord(const std::string id, int year, int month)
 			std::getline(std::cin, input);
 			if (input == "yes") {
 				res = manager.removeWaterRecord(id, year, month);
-				std::cout << res.info + "\n";
+				std::cout << res.info;
 				return;
+			}
+			else {
+				std::cout << "已取消移除操作";
 			}
 			break;
 		}
@@ -312,39 +312,34 @@ void App::operateOnStudent(const std::string id) {
 		return;
 	}
 	while (1) {
-		std::cout << "\n 学号：" + id + " 姓名：" + student->name + "\n";
+		std::cout << "\n\n 学号：" + id + "   姓名：" + student->name + "\n";
 		std::cout << "---------------------------------------------------\n";
 		std::cout << " 根据以下标识输入操作：\n";
 		std::cout << "\t1.\t查询他的所有水费记录\n";
 		std::cout << "\t2.\t设置他的姓名\n";
 		std::cout << "\t3.\t添加他的水费记录\n";
 		std::cout << "\t4.\t移除他\n";
-		std::cout << "\t/exit\t返回上一级\n";
+		std::cout << "\t/e\t返回上一级\n";
 		std::cout << "---------------------------------------------------\n\n";
 		std::cout << "输入操作标识：";
 
 		std::getline(std::cin, input);
 
-		if (checkExit(input)) return;
+		if (checkEmpty(input)) continue;
 
-		if (input.empty()) {
-			std::cout << "你需要输入一些内容，或输入 exit 返回上一级\n";
-			continue;
-		}
+		if (checkExit(input)) return;
 
 		int operation = 0;
 		try {
 			operation = std::stoi(input);
 		}
 		catch (...) {
-			std::cout << "你输的啥？ 按下ENTER键重新输入\n";
-			std::getline(std::cin, input);
+			std::cout << "请输入一个有效标识";
 			continue;
 		}
 
 		if (operation < 1 || operation > 4) {
-			std::cout << "输入的序号不在操作选项列表中 按下ENTER键重新输入\n";
-			std::getline(std::cin, input);
+			std::cout << "输入的序号不在操作选项列表中";
 			continue;
 		}
 
@@ -361,11 +356,11 @@ void App::operateOnStudent(const std::string id) {
 			addWaterRecord(id);
 			break;
 		case 4:
-			std::cout << "确定要移除他吗？(yes/no)";
+			std::cout << "\n确定要移除他吗？(yes/no) ";
 			std::getline(std::cin, input);
 			if (input == "yes") {
 				res = manager.removeStudent(id);
-				std::cout << res.info + "\n";
+				std::cout << res.info;
 				return;
 			}
 			else {
@@ -396,19 +391,14 @@ void App::setWaterRecord(const std::string id, int year, int month)
 	std::cout << res.info;
 }
 
-/// @brief 展示添加学生菜单列表。输入学号和姓名添加学生，或输入 `/exit` 标识取消添加操作。
+/// @brief 展示添加学生菜单列表。输入学号和姓名添加学生，或输入 `/e` 标识取消添加操作。
 void App::addStudent() {
 	Student student;
 	while (1) {
 		if (!enterStudent(student)) return;
 
 		result res = manager.addStudent(student);
-		if (!res.success) {
-			std::cout << "添加失败！原因：" << res.info;
-		}
-		else {
-			std::cout << "添加成功：" << res.info;
-		}
+		std::cout << res.info + "\n";
 
 		if (!promptContinue()) return;
 	}
@@ -419,9 +409,9 @@ void App::addStudent() {
 /// @return 是否输入成功
 bool App::enterStudent(Student& student) {
 
-	std::cout << "---------------------------------------------------\n";
+	std::cout << "\n---------------------------------------------------\n";
 	std::cout << "\t学号和姓名\t添加学生；\n";
-	std::cout << "\t/exit\t在中途取消操作；\n";
+	std::cout << "\t/e\t在中途取消操作；\n";
 	std::cout << "---------------------------------------------------\n\n";
 
 	std::string id;
@@ -447,16 +437,13 @@ bool App::enterId(std::string& id)
 		std::cout << "请输入学号：";
 		std::getline(std::cin, input);
 
-		if (checkExit(input)) return false;
+		if (checkEmpty(input)) continue;
 
-		if (input.empty()) {
-			std::cout << "你需要输入一些内容，或输入 exit 取消添加操作\n";
-			continue;
-		}
+		if (checkExit(input)) return false;
 
 		Student* student = manager.getStudent(input);
 		if (student == nullptr) break;
-		std::cout << "不可添加具有相同学号的学生\n";
+		std::cout << "不可添加具有相同学号的学生\n\n";
 		continue;
 	}
 
@@ -472,15 +459,13 @@ bool App::enterName(std::string& name)
 	std::string input;
 
 	while (1) {
-		std::cout << "请输入姓名：";
+		std::cout << "\n请输入姓名：";
 		std::getline(std::cin, input);
+
+		if (checkEmpty(input)) continue;
 
 		if (checkExit(input)) return false;
 
-		if (input.empty()) {
-			std::cout << "你需要输入一些内容，或输入 exit 取消添加操作\n";
-			continue;
-		}
 		break;
 	}
 
@@ -497,12 +482,9 @@ bool App::enterYear(int& year) {
 		std::cout << "\n请输入年份：";
 		std::getline(std::cin, input);
 
-		if (checkExit(input)) return false;
+		if (checkEmpty(input)) continue;
 
-		if (input.empty()) {
-			std::cout << "你需要输入一些内容，或输入 exit 取消添加操作\n";
-			continue;
-		}
+		if (checkExit(input)) return false;
 
 		try {
 			year = std::stoi(input);
@@ -546,12 +528,9 @@ bool App::enterMonth(int& month) {
 		std::cout << "\n请输入月份：";
 		std::getline(std::cin, input);
 
-		if (checkExit(input)) return false;
+		if (checkEmpty(input)) continue;
 
-		if (input.empty()) {
-			std::cout << "你需要输入一些内容，或输入 exit 取消添加操作\n";
-			continue;
-		}
+		if (checkExit(input)) return false;
 
 		try {
 			month = std::stoi(input);
@@ -576,12 +555,9 @@ bool App::enterUsage(double& usage) {
 		std::cout << "\n请输入用水量（吨数）：";
 		std::getline(std::cin, input);
 
-		if (checkExit(input)) return false;
+		if (checkEmpty(input)) continue;
 
-		if (input.empty()) {
-			std::cout << "你需要输入一些内容，或输入 exit 取消添加操作\n";
-			continue;
-		}
+		if (checkExit(input)) return false;
 
 		try {
 			usage = std::stod(input);
@@ -603,9 +579,9 @@ bool App::enterWaterRecord(WaterRecord& record)
 {
 	std::string input;
 
-	std::cout << "---------------------------------------------------\n";
+	std::cout << "\n---------------------------------------------------\n";
 	std::cout << "\t年、月、用水量\t添加水费记录；\n";
-	std::cout << "\t/exit\t返回上一级；\n";
+	std::cout << "\t/e\t在中途取消添加操作；\n";
 	std::cout << "---------------------------------------------------\n";
 
 	int year, month;
@@ -630,8 +606,8 @@ bool App::promptContinue() {
 
 	std::cout << "\n---------------------------------------------------\n";
 	std::cout << "\t按下ENTER\t继续添加操作；\n";
-	std::cout << "\t/exit\t返回上一级；\n";
-	std::cout << "---------------------------------------------------\n";
+	std::cout << "\t/e\t返回上一级；\n";
+	std::cout << "---------------------------------------------------\n\n";
 	std::cout << "请输入标识：";
 	std::getline(std::cin, input);
 
@@ -647,7 +623,7 @@ void App::addWaterRecord(const std::string id)
 		if (!enterWaterRecord(record)) return;
 
 		result res = manager.addWaterRecord(id, record);
-		std::cout << (res.success ? "成功：" : "失败：") << res.info << "\n";
+		std::cout << "\n" + res.info;
 
 		if (!promptContinue()) return;
 	}
