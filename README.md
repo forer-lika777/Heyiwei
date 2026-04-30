@@ -4,19 +4,46 @@
 
 ## 摘要
 
-这是一个使用 C++ 编写的学生水费管理系统。使用的开发工具为：Visual Studio 2022（编译环境 ISO C++14 Standard）、Visual Studio Code（文档编写）。
+Heyiwei 是一个使用 C++ 编写的学生水费管理系统。使用的开发工具为：Visual Studio 2022（编译环境 ISO C++14 Standard）、Visual Studio Code（文档编写）。
 
-这是一个控制台应用，用户在终端界面查看信息、输入指令、输入信息完成基础交互功能。
+这是一个控制台应用，用户在终端界面查看信息、输入指令、输入信息，完成基础交互功能。
 
-现有的基础功能包括：
+### 学生信息管理
 
-1.  分页查看所有学生信息
-2.  添加、删除学生
-3.  根据学号查询学生
-4.  分页查看单个学生的所有水费记录
-5.  添加、删除水费记录
-6.  查询特定年月份的水费记录
-7.  数据的保存与读取
+Heyiwei 支持对学生基础信息的完整管理。
+
+1.  **分页查看所有学生信息：** 以列表形式展示所有学生，每页默认显示 16 条记录，支持上一页、下一页、跳转指定页等操作。列表中仅显示学号和姓名，界面简洁清晰。
+2.  **添加学生：** 用户输入学号和姓名即可添加新学生。系统会自动检测学号是否已存在，若重复则拒绝添加并提示用户。学号和姓名不能以 `/` 开头，因为该符号被保留为程序指令标识符。
+3.  **删除学生：** 根据学号删除指定学生。删除前会要求用户二次确认，防止误操作。删除学生时，该学生名下的所有水费记录也会一并移除。
+4.  **根据学号查询学生：** 在学生列表界面输入 `s[学号]` 即可快速定位到指定学生，并进入该学生的操作菜单，可进一步查看其水费记录、修改姓名、添加记录或删除学生。
+
+### 水费记录管理
+
+Heyiwei 支持对每位学生的水费记录进行精细管理。
+
+1.  **分页查看单个学生的所有水费记录：** 进入指定学生的操作菜单后，可查看其所有水费记录。记录以列表形式展示，包含年月份、用水量（吨）、费用（元），同样支持分页浏览。
+
+2.  **添加水费记录：** 为指定学生添加某年某月的水费记录。需要输入年份、月份和用水量，费用自动按单价（2.5 元/吨）计算。系统会检查该年月份是否已有记录，若已存在则拒绝添加。
+
+3.  **删除水费记录：** 删除指定学生在某年某月的水费记录。删除前需要用户二次确认。
+
+4.  **查询特定年月份的水费记录：** 在水费记录列表界面输入 `s[年-月]`（例如 `s2026-04`）即可快速定位到指定年月份的水费记录，并进入该记录的操作菜单，可修改用水量或删除记录。
+
+### 数据持久化
+
+Heyiwei 支持完整的数据保存与读取功能。
+
+1.  **数据的保存与读取：** 所有学生和水费记录以 JSON 格式保存在 `students.json` 文件中。程序启动时自动读取该文件加载历史数据，程序运行期间的每次添加、修改、删除操作都会自动保存到文件，程序正常退出时也会保存。若文件损坏或格式错误，系统会自动备份原文件为 `students.json.bak` 并重新初始化数据。
+
+### 交互设计
+
+Heyiwei 拥有细致完善的界面交互设计。
+
+1.  **统一的退出机制：** 在所有输入界面输入 `/e` 即可返回到上一级菜单或退出当前操作，无需强行关闭程序。
+
+2.  **输入合法性校验：** 系统对用户的每一次输入都进行校验，包括学号是否重复、月份是否在 1–12 范围内、用水量是否为非负数等，并给出明确的错误提示。
+
+3.  **操作结果反馈：** 每次添加、修改、删除操作完成后，系统都会显示明确的成功或失败信息，失败时说明具体原因。
 
 ## 参与成员
 
@@ -85,704 +112,25 @@ flowchart TD
 
 *  **灵活的指针与引用操作。** 向其他函数传递对象的指针或引用，数据操作方便高效。
 
+*  **分页查询支持。** `getAllStudents` 和 `getAllRecords` 支持分页显示，每页默认 12 条，页码自动边界检查。
+
+*  **操作结果统一返回。** `WaterManager` 的所有修改操作返回 `result` 结构体，包含 `success`（是否成功）和 `info`（详细信息）两个字段。
+
+*  **输入辅助函数统一处理。** `App` 类提供 `enterId`、`enterName`、`enterYear`、`enterMonth`、`enterUsage` 等函数，统一处理用户输入和合法性校验，支持 `/e` 中途退出。
+
+*  **编码转换处理。** 提供 `gbkToUtf8` 和 `utf8ToGbk` 函数，解决 Windows 控制台（GBK）与 JSON 文件（UTF-8）之间的中文编码转换问题。
+
+*  **数据自动保存。** `WaterManager` 构造时调用 `loadFromFile()` 读取数据，析构时调用 `saveToFile()` 保存数据，每次修改操作后也会自动保存。
+
+*  **文件加载容错。** 加载 `students.json` 时若文件不存在或为空则正常启动；若 JSON 解析失败则自动备份原文件为 `students.json.bak`，并清空数据重新开始。
+
 ### 类型
 
 #### App 类
 
-##### 作用
+##### 概要
 
 实现控制台终端交互功能。
-
-##### 代码
-
-```cpp
-class App
-{
-private:
-	WaterManager& manager;
-	const double PRICE_PER_TON = 2.5; // 定义常量水费
-public:
-	App(WaterManager& mgr) : manager(mgr) {}
-	void run();
-	void listAllStudents();
-	void listAllRecords(const std::string id);
-
-	void addStudent();
-	void addWaterRecord(const std::string id);
-
-	void operateOnStudent(const std::string id);
-	void operateOnRecord(const std::string id, int year, int month);
-
-	void setName(const std::string id);
-	void setWaterRecord(const std::string id, int year, int month);
-
-	bool promptContinue();
-	bool enterWaterRecord(WaterRecord& record);
-	bool enterStudent(Student& student);
-	bool enterId(std::string& id);
-	bool enterName(std::string& name);
-	bool enterYear(int& year);
-	bool enterMonth(int& month);
-	bool enterUsage(double& usage);
-};
-```
-
-```cpp
-#include <iostream>
-#include <string>
-#include "WaterManager.h"
-#include "App.h"
-
-static bool checkExit(std::string input) {
-	if (input == "/exit" || input == "/e") return true;
-	return false;
-}
-
-/// @brief 展示主菜单列表。输入标识选择操作功能。
-void App::run()
-{
-	//程序开始运行的地方
-	std::cout << "===================================================\n";
-	std::cout << "  欢迎使用学生水费管理系统\n";
-
-	while (1) {
-		std::cout << "---------------------------------------------------\n";
-		std::cout << " 根据以下标识输入操作：\n";
-		std::cout << "\t1.\t列出所有学生信息\n";
-		std::cout << "\t2.\t添加学生\n";
-		std::cout << "\t/exit\t退出程序\n";
-		std::cout << "---------------------------------------------------\n\n";
-		std::cout << "请输入操作标识：";
- 
-		// 读取用户输入
-		std::string input;
-		std::getline(std::cin, input);
-  
-		// 判断是否输入了退出指令
-		if (checkExit(input)) {
-			std::cout << "程序即将退出\n";
-			return;
-		}
-
-		// 判断是否在扣问号
-		if (input == "?" || input == "？" || input == "." || input == "。") {
-			std::cout << input + "\n";
-			continue;
-		}
-
-		int operation = 0;
-		try {
-			// 尝试将用户输入转换为数字。转换失败将进入 catch 内部
-			operation = std::stoi(input);
-		}
-		catch (...) {
-			std::cout << "你输的啥？\n";
-			continue; // 进入下一个循环，重新输入内容
-		}
-
-		// 判断输入的序号是否在操作选项列表内
-		if (operation < 1 || operation > 2) {
-			std::cout << "输入的序号不在操作选项列表中\n";
-			continue;
-		}
-
-		std::cout << "\n";
-
-		switch (operation) {
-		case 1:
-			listAllStudents();
-			break;
-		case 2:
-			addStudent();
-			break;
-		}
-	}
-}
-
-int allStudentsPageIndex = 1; // 全局变量，可用于保存上次查阅时的页面序号
-
-/// @brief 展示所有学生列表。输入标识或页码翻阅页面浏览，或输入 s[序号] 查找选择学生。
-void App::listAllStudents()
-{
-	int* pageIndex = &allStudentsPageIndex; // 使用指针
-	result res;
-	while (1) {
-		res = manager.getAllStudents(pageIndex, 16); // 传入页面索引的指针，调用的函数内部对索引的修改会反映在此。
-		std::cout << "---------------------------------------------------\n";
-		std::cout << res.info;
-		std::string input;
-
-		while (1) {
-			std::cout << "\n---------------------------------------------------\n";
-			std::cout << "\tn\t进入下一页；\n";
-			std::cout << "\tp\t进入上一页；\n";
-			std::cout << "\t数字\t指定要查询的页数；\n";
-			std::cout << "\ts[学号]\t对指定学号的学生执行操作\n";
-			std::cout << "\t/exit\t返回上一级；\n";
-			std::cout << "---------------------------------------------------\n\n";
-			std::cout << "请输入操作标识：";
-			std::getline(std::cin, input);
-
-			// 判断是否输入了空内容
-			if (input.empty()) {
-				std::cout << "你需要输入一些内容，或输入 exit 返回上一级";
-				continue;
-			}
-
-			// 判断是否输入了退出指令
-			if (checkExit(input)) return;
-
-			// 判断输入的 s[学号] 格式
-			if (input.length() >= 2 && (input[0] == 's' || input[0] == 'S')) {
-				std::string numStr = input.substr(1);
-				if (manager.getStudent(numStr) == nullptr) {
-					std::cout << "\n没有找到指定学号的学生\n";
-					break;
-				}
-				operateOnStudent(numStr);
-				break;
-			}
-
-			try {
-				// 将输入的字符串转换为数字
-				*pageIndex = std::stoi(input);
-				break;
-			}
-			catch (...) {
-			}
-
-			if (input == "n" || input == "next" ) {
-				(*pageIndex)++; // 下一页
-				break;
-			}
-
-			if (input == "p" || input == "previous") {
-				(*pageIndex)--; // 上一页
-				break;
-			}
-
-			std::cout << "你输入的标识不合法";
-		}
-	}
-}
-
-int allRecordsPageIndex = 1;
-
-/// @brief 展示所有水费记录列表。输入标识或页码翻阅页面浏览，或输入 s[年-月] 查找选择记录。
-/// @param id 学生学号
-void App::listAllRecords(const std::string id)
-{
-	int* pageIndex = &allRecordsPageIndex;
-	result res;
-
-	while (1) {
-		res = manager.getAllRecords(id, pageIndex, 16);
-		std::cout << "\n---------------------------------------------------\n";
-		std::cout << res.info;
-		std::string input;
-
-		while (1) {
-			std::cout << "\n---------------------------------------------------\n";
-			std::cout << "\tn\t进入下一页；\n";
-			std::cout << "\tp\t进入上一页；\n";
-			std::cout << "\t数字\t指定要查询的页数；\n";
-			std::cout << "\ts[年-月]\t对指定月份的记录执行操作\n";
-			std::cout << "\t/exit\t返回上一级；\n";
-			std::cout << "---------------------------------------------------\n\n";
-			std::cout << "请输入操作标识：";
-			std::getline(std::cin, input);
-
-			if (input.empty()) {
-				std::cout << "你需要输入一些内容，或输入 exit 返回上一级";
-				continue;
-			}
-   
-			// 判断是否输入了退出指令
-			if (checkExit(input)) return;
-  
-			// 判断输入的 s[年-月] 格式
-			if (input.length() >= 2 && (input[0] == 's' || input[0] == 'S')) {
-				std::string dateStr = input.substr(1);
-
-				// 解析年-月格式
-				size_t dashPos = dateStr.find('-');
-				if (dashPos == std::string::npos) {
-					std::cout << "格式错误，请使用 年-月 格式，例如：s2026-04";
-					continue;
-				}
-
-				try {
-					//尝试将输入的字符串转换为数字
-					int year = std::stoi(dateStr.substr(0, dashPos));
-					int month = std::stoi(dateStr.substr(dashPos + 1));
-
-					// 验证年月有效性
-					if (year < 1 || month < 1 || month > 12) {
-						std::cout << "年份或月份无效";
-						continue;
-					}
-
-					// 调用操作指定月份记录的函数
-					operateOnRecord(id, year, month);
-
-					// 操作完成后刷新当前页面
-					break;
-				}
-				catch (...) {
-					std::cout << "年月格式不正确，请使用数字";
-					continue;
-				}
-			}
-
-			try {
-				*pageIndex = std::stoi(input);
-				break;
-			}
-			catch (...) {
-			}
-
-			if (input == "n" || input == "next") {
-				(*pageIndex)++;
-				break;
-			}
-
-			if (input == "p" || input == "previous") {
-				(*pageIndex)--;
-				break;
-			}
-
-			std::cout << "你输入的标识不合法";
-		}
-	}
-}
-
-/// @brief 对指定月份的水费记录执行操作
-/// @param id 学生学号
-/// @param year 年份
-/// @param month 月份
-void App::operateOnRecord(const std::string id, int year, int month)
-{
-	std::string input;
-	auto* student = manager.getStudent(id);
-	if (student == nullptr) {
-		std::cout << "没有找到目标学号的学生";
-		return;
-	}
-	int index = student->getWaterRecordIndex(year, month);
-	if (index == -1) {
-		std::cout << "未找到目标年月份的水费记录";
-		return;
-	}
-	while (1) {
-		std::cout <<
-			"\n 学号：" + id +
-			std::to_string(year) + " 年 " +
-			std::to_string(month) + " 月的水费记录  " +
-			std::to_string(student->records[index].usage) + " （吨） " +
-			std::to_string(student->records[index].cost) + " （元）\n";
-		std::cout << "---------------------------------------------------\n";
-		std::cout << " 根据以下标识输入操作：\n";
-		std::cout << "\t1.\t设置这个水费记录\n";
-		std::cout << "\t2.\t移除这个水费记录\n";
-		std::cout << "\t/exit\t返回上一级\n";
-		std::cout << "---------------------------------------------------\n\n";
-		std::cout << "输入操作标识：";
-
-		std::getline(std::cin, input);
-
-		if (checkExit(input)) return;
-
-		if (input.empty()) {
-			std::cout << "你需要输入一些内容，或输入 exit 返回上一级\n";
-			continue;
-		}
-
-		int operation = 0;
-		try {
-			operation = std::stoi(input);
-		}
-		catch (...) {
-			std::cout << "你输的啥？ 按下ENTER键重新输入\n";
-			std::getline(std::cin, input);
-			continue;
-		}
-
-		if (operation < 1 || operation > 2) {
-			std::cout << "输入的序号不在操作选项列表中 按下ENTER键重新输入\n";
-			std::getline(std::cin, input);
-			continue;
-		}
-
-		result res;
-
-		switch (operation) {
-		case 1:
-			setWaterRecord(id, year, month);
-			break;
-		case 2:
-			std::cout << "确定要移除这个吗？(yes/no)";
-			std::getline(std::cin, input);
-			if (input == "yes") {
-				res = manager.removeWaterRecord(id, year, month);
-				std::cout << res.info + "\n";
-				return;
-			}
-			break;
-		}
-	}
-}
-
-/// @brief 对单个学生执行操作。输入指定标识查看所有水费记录、设置姓名、添加水费记录、移除学生。
-/// @param id 学生学号
-void App::operateOnStudent(const std::string id) {
-	std::string input;
-	auto* student = manager.getStudent(id);
-	if (student == nullptr) {
-		std::cout << "没有找到目标学号的学生";
-		return;
-	}
-	while (1) {
-		std::cout << "\n 学号：" + id + " 姓名：" + student->name + "\n";
-		std::cout << "---------------------------------------------------\n";
-		std::cout << " 根据以下标识输入操作：\n";
-		std::cout << "\t1.\t查询他的所有水费记录\n";
-		std::cout << "\t2.\t设置他的姓名\n";
-		std::cout << "\t3.\t添加他的水费记录\n";
-		std::cout << "\t4.\t移除他\n";
-		std::cout << "\t/exit\t返回上一级\n";
-		std::cout << "---------------------------------------------------\n\n";
-		std::cout << "输入操作标识：";
-
-		std::getline(std::cin, input);
-
-		if (checkExit(input)) return;
-
-		if (input.empty()) {
-			std::cout << "你需要输入一些内容，或输入 exit 返回上一级\n";
-			continue;
-		}
-
-		int operation = 0;
-		try {
-			operation = std::stoi(input);
-		}
-		catch (...) {
-			std::cout << "你输的啥？ 按下ENTER键重新输入\n";
-			std::getline(std::cin, input);
-			continue;
-		}
-
-		if (operation < 1 || operation > 4) {
-			std::cout << "输入的序号不在操作选项列表中 按下ENTER键重新输入\n";
-			std::getline(std::cin, input);
-			continue;
-		}
-
-		result res;
-
-		switch (operation) {
-		case 1:
-			listAllRecords(id);
-			break;
-		case 2:
-			setName(id);
-			break;
-		case 3:
-			addWaterRecord(id);
-			break;
-		case 4:
-			std::cout << "确定要移除他吗？(yes/no)";
-			std::getline(std::cin, input);
-			if (input == "yes") {
-				res = manager.removeStudent(id);
-				std::cout << res.info + "\n";
-				return;
-			}
-			else {
-				std::cout << "已取消移除操作";
-			}
-		}
-	}
-}
-
-/// @brief 设置指定学生的名字
-/// @param id 学生学号
-void App::setName(const std::string id) {
-	std::string name;
-	if (!enterName(name)) return;
-	result res = manager.setStudent(id, name);
-	std::cout << res.info;
-}
-
-/// @brief 设置指定学生在指定年月的水费记录
-/// @param id 学生学号
-/// @param year 年份
-/// @param month 月份
-void App::setWaterRecord(const std::string id, int year, int month)
-{
-	double usage;
-	if (!enterUsage(usage)) return;
-	result res = manager.setWaterRecord(id, year, month, usage);
-	std::cout << res.info;
-}
-
-/// @brief 展示添加学生菜单列表。输入学号和姓名添加学生，或输入 `/exit` 标识取消添加操作。
-void App::addStudent() {
-	Student student;
-	while (1) {
-		if (!enterStudent(student)) return;
-
-		result res = manager.addStudent(student);
-		if (!res.success) {
-			std::cout << "添加失败！原因：" << res.info;
-		}
-		else {
-			std::cout << "添加成功：" << res.info;
-		}
-
-		if (!promptContinue()) return;
-	}
-}
-
-/// @brief 输入学生信息
-/// @param student 学生对象
-/// @return 是否输入成功
-bool App::enterStudent(Student& student) {
-
-	std::cout << "---------------------------------------------------\n";
-	std::cout << "\t学号和姓名\t添加学生；\n";
-	std::cout << "\t/exit\t在中途取消操作；\n";
-	std::cout << "---------------------------------------------------\n\n";
-
-	std::string id;
-	if (!enterId(id)) return false;
-
-	std::string name;
-	if (!enterName(name)) return false;
-
-	student.id = id;
-	student.name = name;
-
-	return true;
-}
-
-/// @brief 输入学生学号
-/// @param id 学号
-/// @return 是否输入成功
-bool App::enterId(std::string& id)
-{
-	std::string input;
-
-	while (1) {
-		std::cout << "请输入学号：";
-		std::getline(std::cin, input);
-
-		if (checkExit(input)) return false;
-
-		if (input.empty()) {
-			std::cout << "你需要输入一些内容，或输入 exit 取消添加操作\n";
-			continue;
-		}
-
-		Student* student = manager.getStudent(input);
-		if (student == nullptr) break;
-		std::cout << "不可添加具有相同学号的学生\n";
-		continue;
-	}
-
-	id = input;
-	return true;
-}
-
-/// @brief 输入学生姓名
-/// @param name 姓名
-/// @return 是否输入成功
-bool App::enterName(std::string& name)
-{
-	std::string input;
-
-	while (1) {
-		std::cout << "请输入姓名：";
-		std::getline(std::cin, input);
-
-		if (checkExit(input)) return false;
-
-		if (input.empty()) {
-			std::cout << "你需要输入一些内容，或输入 exit 取消添加操作\n";
-			continue;
-		}
-		break;
-	}
-
-	name = input;
-	return true;
-}
-
-/// @brief 输入年份
-/// @param year 年份
-/// @return 是否输入成功
-bool App::enterYear(int& year) {
-	std::string input;
-	while (1) {
-		std::cout << "\n请输入年份：";
-		std::getline(std::cin, input);
-
-		if (checkExit(input)) return false;
-
-		if (input.empty()) {
-			std::cout << "你需要输入一些内容，或输入 exit 取消添加操作\n";
-			continue;
-		}
-
-		try {
-			year = std::stoi(input);
-
-			if (year <= 0) return false;
-
-			if (year <= 1900)
-				std::cout << "哥们真是个古人\n";
-			else if (year <= 2000)
-				std::cout << "哥们真是活在上个世纪的人\n";
-
-			auto now = std::time(nullptr);
-			std::tm localTimeStruct;
-			auto* localTime = &localTimeStruct;
-#if defined(_MSC_VER)
-			localtime_s(localTime, &now);
-#else
-			localtime_r(&now, localTime);
-#endif
-			int currentYear = localTime->tm_year + 1900;
-
-			if (year > currentYear)
-				std::cout << "哥们真是从未来穿越回来的人\n";
-
-			break;
-		}
-		catch (const std::exception&) {
-			std::cout << "你输入的年份不合法\n";
-			continue;
-		}
-	}
-	return true;
-}
-
-/// @brief 输入月份
-/// @param month 月份
-/// @return 是否输入成功
-bool App::enterMonth(int& month) {
-	std::string input;
-	while (1) {
-		std::cout << "\n请输入月份：";
-		std::getline(std::cin, input);
-
-		if (checkExit(input)) return false;
-
-		if (input.empty()) {
-			std::cout << "你需要输入一些内容，或输入 exit 取消添加操作\n";
-			continue;
-		}
-
-		try {
-			month = std::stoi(input);
-			if (month >= 1 && month <= 12) break;
-		}
-		catch (...) {
-			std::cout << "请输入一个有效数字\n";
-			continue;
-		}
-
-		std::cout << "你输入的月份不合法\n";
-	}
-	return true;
-}
-
-/// @brief 输入用水量
-/// @param usage 用水量
-/// @return 是否输入成功
-bool App::enterUsage(double& usage) {
-	std::string input;
-	while (1) {
-		std::cout << "\n请输入用水量（吨数）：";
-		std::getline(std::cin, input);
-
-		if (checkExit(input)) return false;
-
-		if (input.empty()) {
-			std::cout << "你需要输入一些内容，或输入 exit 取消添加操作\n";
-			continue;
-		}
-
-		try {
-			usage = std::stod(input);
-			if (usage < 0) throw;
-			break;
-		}
-		catch (...) {
-			std::cout << "你输入的数据不合法\n";
-			continue;
-		}
-	}
-	return true;
-}
-
-/// @brief 输入水费记录
-/// @param record 水费记录对象
-/// @return 是否输入成功
-bool App::enterWaterRecord(WaterRecord& record)
-{
-	std::string input;
-
-	std::cout << "---------------------------------------------------\n";
-	std::cout << "\t年、月、用水量\t添加水费记录；\n";
-	std::cout << "\t/exit\t返回上一级；\n";
-	std::cout << "---------------------------------------------------\n";
-
-	int year, month;
-	double usage;
-
-	if (!enterYear(year)) return false;
-	if (!enterMonth(month)) return false;
-	if (!enterUsage(usage)) return false;
-
-	record.year = year;
-	record.month = month;
-	record.usage = usage;
-	record.cost = usage * PRICE_PER_TON;
-
-	return true;
-}
-
-/// @brief 提示是否继续
-/// @return 是否继续
-bool App::promptContinue() {
-	std::string input;
-
-	std::cout << "\n---------------------------------------------------\n";
-	std::cout << "\t按下ENTER\t继续添加操作；\n";
-	std::cout << "\t/exit\t返回上一级；\n";
-	std::cout << "---------------------------------------------------\n";
-	std::cout << "请输入标识：";
-	std::getline(std::cin, input);
-
-	return !checkExit(input);
-}
-
-/// @brief 添加水费记录
-/// @param id 学号
-void App::addWaterRecord(const std::string id)
-{
-	while (1) {
-		WaterRecord record;
-		if (!enterWaterRecord(record)) return;
-
-		result res = manager.addWaterRecord(id, record);
-		std::cout << (res.success ? "成功：" : "失败：") << res.info << "\n";
-
-		if (!promptContinue()) return;
-	}
-}
-```
 
 ##### `App.run()` 方法
 
@@ -797,10 +145,14 @@ flowchart TD
 	start["App.run()"] --> entry[输入标识]
 	entry --> |1| list_all_students["列出所有学生列表<br/>listAllStudents()"]
 	entry --> |2| add_student["添加学生<br/>addStudent()"]
-	entry --> |/exit| exit[退出函数]
+	entry --> |/e| exit[退出函数]
 	entry -.-> |其他| prompt_error[提示错误]
 	prompt_error --> entry
 ```
+
+演示截图：
+
+![main](./images/main.png)
 
 ---
 
@@ -808,7 +160,7 @@ flowchart TD
 
 类型：`void`
 
-说明：展示添加学生菜单列表。输入学号和姓名添加学生，或输入 `/exit` 标识取消添加操作。
+说明：展示添加学生菜单列表。输入学号和姓名添加学生，或输入 `/e` 标识取消添加操作。
 
 流程图：
 
@@ -822,9 +174,13 @@ flowchart LR
     continue_enter --> |yes| enter_id
     continue_enter --> |no| exit_function([退出函数])
 
-    enter_id -.-> |"/exit"| exit_function
-    enter_name -.-> |"/exit"| exit_function
+    enter_id -.-> |"/e"| exit_function
+    enter_name -.-> |"/e"| exit_function
 ```
+
+演示截图：
+
+![add-student](./images/add-student.png)
 
 ---
 
@@ -847,13 +203,17 @@ flowchart TD
     entry --> |p| previous_page[上一页 pageIndex--]
     entry --> |数字| target_page[目标页 pageIndex = target]
     entry --> |"s[学号]"| operate_on_student["设置特定学生<br/>operateOnStudent(id)"]
-    entry --> |"/exit"| exit([退出函数])
+    entry --> |"/e"| exit([退出函数])
 
     next_page --> get_students
     previous_page --> get_students
     target_page --> get_students
     operate_on_student --> get_students
 ```
+
+演示截图：
+
+![list-all-students](./images/list-all-students.png)
 
 ---
 
@@ -876,13 +236,17 @@ flowchart TD
     entry --> |p| previous_page[上一页 pageIndex--]
     entry --> |数字| target_page[目标页 pageIndex = target]
     entry --> |"s[年-月]"| operate_on_record["设置特定水费记录<br/>operateOnRecord(id, <br/>year, month)"]
-    entry --> |"/exit"| exit([退出函数])
+    entry --> |"/e"| exit([退出函数])
 
     next_page --> get_records
     previous_page --> get_records
     target_page --> get_records
     operate_on_record --> get_records
 ```
+
+演示截图：
+
+![list-all-records](./images/list-all-records.png)
 
 ##### `App.operateOnStudent(const std::string id)` 方法
 
@@ -903,7 +267,7 @@ flowchart TD
     entry --> |2| set_name["设置姓名<br/>set_name(id)"]
     entry --> |3| add_record["添加水费记录<br/>addWaterRecord(id)"]
     entry --> |4| remove_this[移除该学生]
-    entry --> |"/exit"| exit
+    entry --> |"/e"| exit
 
     list_all_records --> entry
     set_name --> entry
@@ -913,6 +277,10 @@ flowchart TD
     confirm --> |yes| exit
     confirm --> |no| entry
 ```
+
+演示截图：
+
+![operate-on-student](./images/operate-on-student.png)
 
 ---
 
@@ -933,7 +301,7 @@ flowchart TD
     
     entry --> |1| set_record["设置这个水费记录<br/>setWaterRecord(id,<br/> year, month)"]
     entry --> |2| remove_this[移除这个水费记录]
-    entry --> |"/exit"| exit
+    entry --> |"/e"| exit
 
     set_record --> entry
     remove_this --> confirm{确认删除}
@@ -941,6 +309,10 @@ flowchart TD
     confirm --> |yes| exit
     confirm --> |no| entry
 ```
+
+演示截图：
+
+![operate-on-record](./images/operate-on-record.png)
 
 ---
 
@@ -954,6 +326,10 @@ flowchart TD
 
 未制作
 
+演示截图：
+
+![set-name](./images/set-name.png)
+
 ---
 
 ##### `App.setWaterRecord(const std::string id, int year, int month)`
@@ -965,6 +341,10 @@ flowchart TD
 流程图：
 
 未制作
+
+演示截图：
+
+![set-record](./images/set-record.png)
 
 ---
 
@@ -1048,58 +428,17 @@ flowchart TD
 
 未制作
 
+演示截图：
+
+![add-water-record](./images/add-water-record.png)
+
 ---
 
 #### WaterManager 类
 
-##### 作用
+##### 概要
 
 实现数据管理功能。
-
-##### 代码
-
-```cpp
-struct result {
-	bool success; // 利用布尔值判断成功与否
-	std::string info; // 利用一个字符串字段来对成功与否的说明
-};
-
-// 水费管理类的声明
-class WaterManager
-{
-private: // 外部函数无法调用部分
-	std::vector<Student> students; // 定义一个用于储存每个学生数据的动态数组
-	const double PRICE_PER_TON = 2.5; // 定义常量水费
-
-	int findStudentIndex(const std::string& id); // 传递id这个数据用传递地址的方法
-	void saveToFile();
-	void loadFromFile();
-
-public: // 外部函数可以调用部分
-	WaterManager();
-	~WaterManager();
-
-	result getAllStudents(int* pageIndex, int count);
-	result getAllRecords(const std::string& id, int* paggeIndex, int count);
-	Student* getStudent(const std::string& id);
-
-	result queryTotalRecord(const std::string& id);
-
-	result addStudent(Student student);
-	result setStudent(const std::string& id, const std::string& name);
-	result removeStudent(const std::string& id);
-
-	result addWaterRecord(const std::string& id, const WaterRecord& record);
-	result setWaterRecord(const std::string& id, int year, int month, double usage);
-	result removeWaterRecord(const std::string& id, int year, int month);
-};
-```
-
-```cpp
-
-```
-
-**此处呈现的代码不一定是最终代码，最终代码请翻阅文件查看。*
 
 ##### 编码转换辅助函数
 
@@ -1373,3 +712,8 @@ flowchart LR
 ```
 
 ---
+
+## 另请参阅
+
+[C++ 文档 | Microsoft Learn](https://learn.microsoft.com/zh-cn/cpp/cpp/?view=msvc-170 "https://learn.microsoft.com/zh-cn/cpp/cpp/?view=msvc-170")  
+[JSON for Modern C++ (nlohmann/json.hpp)](https://json.nlohmann.me/ "https://json.nlohmann.me/")
