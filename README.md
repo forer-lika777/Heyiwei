@@ -253,26 +253,26 @@ Heyiwei 拥有细致完善的终端界面交互设计。
 
 ```mermaid
 flowchart TD
-    main[main] --> app_run["app.run()"]
+    A[main] --> B["app.run()"]
 
-    app_run -->enter_student[添加学生]
-    app_run -->exit_program[退出程序]
-    app_run -->list_all_students[列出所有学生列表]
+    B -->C[添加学生]
+    B -->D[退出程序]
+    B -->E[列出所有学生列表]
 
-    list_all_students --> find_student[依据学号查找选择学生]
-    find_student --> operate_student[操作选择的学生]
+    E --> F[依据学号查找选择学生]
+    F --> G[操作选择的学生]
 
-    operate_student --> set_name[修改姓名]
-    operate_student --> delete_student[删除学生]
-    operate_student --> list_records[列出所有水费记录列表]
+    G --> H[修改姓名]
+    G --> I[删除学生]
+    G --> J[列出所有水费记录列表]
 
-    list_records --> find_record[依据年月份查找<br/>选择水费记录]
-    list_records --> add_record[添加水费记录]
+    J --> K[依据年月份查找<br/>选择水费记录]
+    J --> L[添加水费记录]
 
-    find_record --> operate_record[操作单个水费记录]
+    K --> M[操作单个水费记录]
 
-    operate_record --> set_record[设置水费记录]
-    operate_record --> delete_record[删除水费记录]
+    M --> N[设置水费记录]
+    M --> O[删除水费记录]
 ```
 
 ### 设计说明
@@ -351,12 +351,12 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-	start["App.run()"] --> entry[输入标识]
-	entry --> |1| list_all_students["列出所有学生列表<br/>listAllStudents()"]
-	entry --> |2| add_student["添加学生<br/>addStudent()"]
-	entry --> |/e| exit[退出函数]
-	entry -.-> |其他| prompt_error[提示错误]
-	prompt_error --> entry
+	A["App.run()"] --> B[输入标识]
+	B --> |1| C["列出所有学生列表<br/>listAllStudents()"]
+	B --> |2| D["添加学生<br/>addStudent()"]
+	B --> |/e| E[退出函数]
+	B -.-> |其他| F[提示错误]
+	F --> B
 ```
 
 演示截图：
@@ -375,16 +375,16 @@ flowchart TD
 
 ```mermaid
 flowchart LR
-    entry["addStudent()"] --> enter_id[输入学号]
-    enter_id --> enter_name[输入姓名]
-    enter_name --> manager_add_student["添加学生<br/>addStudent(student)"]
-    manager_add_student --> |完成| continue_enter{是否继续输入？}
+    A["addStudent()"] --> B[输入学号]
+    B --> C[输入姓名]
+    C --> D["添加学生<br/>addStudent(student)"]
+    D --> |完成| E{是否继续输入？}
 
-    continue_enter --> |yes| enter_id
-    continue_enter --> |no| exit_function([退出函数])
+    E --> |yes| B
+    E --> |no| F([退出函数])
 
-    enter_id -.-> |"/e"| exit_function
-    enter_name -.-> |"/e"| exit_function
+    B -.-> |"/e"| F
+    C -.-> |"/e"| F
 ```
 
 演示截图：
@@ -403,21 +403,21 @@ flowchart LR
 
 ```mermaid
 flowchart TD
-    start["listAllStudents()"] --> init_pointer[初始化全局页面指针]
-    init_pointer --> get_students["manager.getAllStudents<br/>(pageIndex, 16)"]
-    get_students --> show_info[列出所有学生信息]
+    A["listAllStudents()"] --> B[初始化全局页面指针]
+    B --> C["manager.getAllStudents<br/>(pageIndex, 16)"]
+    C --> D[列出所有学生信息]
 
-    show_info --> entry[输入标识]
-    entry --> |n| next_page[下一页 pageIndex++]
-    entry --> |p| previous_page[上一页 pageIndex--]
-    entry --> |数字| target_page[目标页 pageIndex = target]
-    entry --> |"s[学号]"| operate_on_student["设置特定学生<br/>operateOnStudent(id)"]
-    entry --> |"/e"| exit([退出函数])
+    D --> E[输入标识]
+    E --> |n| F[下一页 pageIndex++]
+    E --> |p| G[上一页 pageIndex--]
+    E --> |数字| H[目标页 pageIndex = target]
+    E --> |"s[学号]"| I["设置特定学生<br/>operateOnStudent(id)"]
+    E --> |"/e"| J([退出函数])
 
-    next_page --> get_students
-    previous_page --> get_students
-    target_page --> get_students
-    operate_on_student --> get_students
+    F --> C
+    G --> C
+    H --> C
+    I --> C
 ```
 
 演示截图：
@@ -436,21 +436,21 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    start["listAllRecords()"] --> init_pointer[初始化全局页面指针]
-    init_pointer --> get_records["manager.getAllRecords<br/>(pageIndex, 16)"]
-    get_records --> show_info[列出所有水费信息]
+    A["listAllRecords()"] --> B[初始化全局页面指针]
+    B --> C["manager.getAllRecords<br/>(pageIndex, 16)"]
+    C --> D[列出所有水费信息]
 
-    show_info --> entry[输入标识]
-    entry --> |n| next_page[下一页 pageIndex++]
-    entry --> |p| previous_page[上一页 pageIndex--]
-    entry --> |数字| target_page[目标页 pageIndex = target]
-    entry --> |"s[年-月]"| operate_on_record["设置特定水费记录<br/>operateOnRecord(id, <br/>year, month)"]
-    entry --> |"/e"| exit([退出函数])
+    D --> E[输入标识]
+    E --> |n| F[下一页 pageIndex++]
+    E --> |p| G[上一页 pageIndex--]
+    E --> |数字| H[目标页 pageIndex = target]
+    E --> |"s[年-月]"| I["设置特定水费记录<br/>operateOnRecord(id, <br/>year, month)"]
+    E --> |"/e"| J([退出函数])
 
-    next_page --> get_records
-    previous_page --> get_records
-    target_page --> get_records
-    operate_on_record --> get_records
+    F --> C
+    G --> C
+    H --> C
+    I --> C
 ```
 
 演示截图：
@@ -467,24 +467,24 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    start["operateOnStudent(id)"] --> check_exist{检查学号是否存在}
+    A["operateOnStudent(id)"] --> B{检查学号是否存在}
 
-    check_exist --> |不存在| exit(退出函数)
-    check_exist --> |存在| entry[输入标识]
+    B --> |不存在| C(退出函数)
+    B --> |存在| D[输入标识]
     
-    entry --> |1| list_all_records["列出所有水费记录列表<br/>listAllRecords(id)"]
-    entry --> |2| set_name["设置姓名<br/>set_name(id)"]
-    entry --> |3| add_record["添加水费记录<br/>addWaterRecord(id)"]
-    entry --> |4| remove_this[移除该学生]
-    entry --> |"/e"| exit
+    D --> |1| E["列出所有水费记录列表<br/>listAllRecords(id)"]
+    D --> |2| F["设置姓名<br/>set_name(id)"]
+    D --> |3| G["添加水费记录<br/>addWaterRecord(id)"]
+    D --> |4| H[移除该学生]
+    D --> |"/e"| C
 
-    list_all_records --> entry
-    set_name --> entry
-    add_record --> entry
-    remove_this --> confirm{确认删除}
+    E --> D
+    F --> D
+    G --> D
+    H --> I{确认删除}
 
-    confirm --> |yes| exit
-    confirm --> |no| entry
+    I --> |yes| C
+    I --> |no| D
 ```
 
 演示截图：
@@ -519,20 +519,20 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    start["operateOnRecord(id,<br/> year, month)"] --> check_exist{检查学号和水费<br/>记录是否存在}
+    A["operateOnRecord(id,<br/> year, month)"] --> B{检查学号和水费<br/>记录是否存在}
 
-    check_exist --> |不存在| exit(退出函数)
-    check_exist --> |存在| entry[输入标识]
+    B --> |不存在| C(退出函数)
+    B --> |存在| G[输入标识]
     
-    entry --> |1| set_record["设置这个水费记录<br/>setWaterRecord(id,<br/> year, month)"]
-    entry --> |2| remove_this[移除这个水费记录]
-    entry --> |"/e"| exit
+    G --> |1| D["设置这个水费记录<br/>setWaterRecord(id,<br/> year, month)"]
+    G --> |2| E[移除这个水费记录]
+    G --> |"/e"| C
 
-    set_record --> entry
-    remove_this --> confirm{确认删除}
+    D --> G
+    E --> F{确认删除}
 
-    confirm --> |yes| exit
-    confirm --> |no| entry
+    F --> |yes| C
+    F --> |no| G
 ```
 
 演示截图：
@@ -676,8 +676,8 @@ std::string utf8ToGbk(const std::string& utf8Str);  // UTF-8 → GBK（加载时
 
 ```mermaid
 flowchart LR
-    start["WaterManager()"] --> load["loadFromFile()"]
-    load --> exit["初始化完成"]
+    A["WaterManager()"] --> B["loadFromFile()"]
+    B --> C["初始化完成"]
 ```
 
 ---
@@ -692,8 +692,8 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    start["~WaterManager()"] --> save["saveToFile()"]
-    save --> exit["程序退出，数据已保存"]
+    A["~WaterManager()"] --> B["saveToFile()"]
+    B --> C["程序退出，数据已保存"]
 ```
 
 ---
@@ -708,24 +708,24 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    start["loadFromFile()"] --> open_file[使用 std::ifstream 打开文件]
-    open_file --> check_open{检查是否打开}
-    check_open --> |no| open_failed[读取失败]
+    A["loadFromFile()"] --> B[使用 std::ifstream 打开文件]
+    B --> C{检查是否打开}
+    C --> |no| D[读取失败]
 
-    open_failed --> exit[退出函数]
+    D --> E[退出函数]
 
-    check_open --> |yes| check_empty{检查是否为空}
+    C --> |yes| F{检查是否为空}
 
-    check_empty --> |yes| open_failed
+    F --> |yes| D
 
-    check_empty --> |no| check_format{解析格式是否正确}
-    check_format --> |yes| load_data[加载数据]
-    load_data --> exit
+    F --> |no| G{解析格式是否正确}
+    G --> |yes| H[加载数据]
+    H --> E
 
-    check_format --> |no| parse_failed[解析失败]
+    G --> |no| I[解析失败]
 
-    parse_failed --> backup_file[备份文件]
-    backup_file --> exit
+    I --> J[备份文件]
+    J --> E
 
 ```
 
@@ -741,11 +741,11 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    start["saveToFile()"] --> convert["将 students 转换为 JSON 格式"]
-    convert --> open["std::ofstream 打开 data.json"]
-    open --> write["写入 JSON 数据"]
-    write --> close["关闭文件"]
-    close --> exit["退出"]
+    A["saveToFile()"] --> B["将 students 转换为 JSON 格式"]
+    B --> C["std::ofstream 打开 data.json"]
+    C --> D["写入 JSON 数据"]
+    D --> E["关闭文件"]
+    E --> F["退出"]
 ```
 
 ---
@@ -760,13 +760,13 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    start["findStudentIndex(id)"] --> loop["遍历 students 数组"]
-    loop --> check{"students[i].id == id?"}
-    check --> |是| return_i["返回索引 i"]
-    check --> |否| next["继续下一个"]
-    next --> loop_end{遍历结束？}
-    loop_end --> |否| loop
-    loop_end --> |是| return_minus["返回 -1"]
+    A["findStudentIndex(id)"] --> B["遍历 students 数组"]
+    B --> C{"students[i].id == id?"}
+    C --> |是| D["返回索引 i"]
+    C --> |否| E["继续下一个"]
+    E --> F{遍历结束？}
+    F --> |否| B
+    F --> |是| G["返回 -1"]
 ```
 
 ---
@@ -781,15 +781,15 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    start["addStudent(student)"] --> check_exist{检查学号是否存在}
+    A["addStudent(student)"] --> B{检查学号是否存在}
 
-    check_exist --> |yes| exit[退出函数]
-    check_exist --> |no| check_format{检查是否包含程序标识符}
+    B --> |yes| C[退出函数]
+    B --> |no| D{检查是否包含程序标识符}
 
-    check_format --> |yes| exit
-    check_format --> |no| add_student[添加学生]
+    D --> |yes| C
+    D --> |no| E[添加学生]
 
-    add_student --> exit
+    E --> C
 ```
 
 ---
@@ -804,12 +804,12 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    start["setStudent(id, name)"] --> find["findStudentIndex(id)"]
-    find --> exist{学生是否存在？}
-    exist --> |否| fail["返回失败：学生不存在"]
-    exist --> |是| update["students[index]<br/>.name = name"]
-    update --> save["saveToFile()"]
-    save --> success["返回成功：显示新旧姓名"]
+    A["setStudent(id, name)"] --> B["findStudentIndex(id)"]
+    B --> C{学生是否存在？}
+    C --> |否| D["返回失败：学生不存在"]
+    C --> |是| E["students[index]<br/>.name = name"]
+    E --> F["saveToFile()"]
+    F --> G["返回成功：显示新旧姓名"]
 ```
 
 ---
@@ -824,12 +824,12 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    start["removeStudent(id)"] --> find["findStudentIndex(id)"]
-    find --> exist{学生是否存在？}
-    exist --> |否| fail["返回失败：学生不存在"]
-    exist --> |是| erase["students.erase<br/>(students.begin() + index)"]
-    erase --> save["saveToFile()"]
-    save --> success["返回成功：删除成功"]
+    A["removeStudent(id)"] --> B["findStudentIndex(id)"]
+    B --> C{学生是否存在？}
+    C --> |否| D["返回失败：学生不存在"]
+    C --> |是| E["students.erase<br/>(students.begin() + index)"]
+    E --> F["saveToFile()"]
+    F --> G["返回成功：删除成功"]
 ```
 
 ---
@@ -844,15 +844,15 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    start["addWaterRecord(id, record)"] --> find["findStudentIndex(id)"]
-    find --> exist{学生是否存在？}
-    exist --> |否| fail_student["返回失败：学生不存在"]
-    exist --> |是| check_dup["遍历 records 检查年月是否重复"]
-    check_dup --> dup{是否重复？}
-    dup --> |是| fail_dup["返回失败：该年月已有记录"]
-    dup --> |否| add["students[index].records.push_back(record)"]
-    add --> save["saveToFile()"]
-    save --> success["返回成功：显示添加的记录详情"]
+    A["addWaterRecord(id, record)"] --> B["findStudentIndex(id)"]
+    B --> C{学生是否存在？}
+    C --> |否| D["返回失败：学生不存在"]
+    C --> |是| E["遍历 records 检查年月是否重复"]
+    E --> F{是否重复？}
+    F --> |是| G["返回失败：该年月已有记录"]
+    F --> |否| H["students[index].records.push_back(record)"]
+    H --> I["saveToFile()"]
+    I --> J["返回成功：显示添加的记录详情"]
 ```
 
 ---
@@ -867,16 +867,16 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    start["setWaterRecord(id, year, month, usage)"] --> find["findStudentIndex(id)"]
-    find --> exist{学生是否存在？}
-    exist --> |否| fail_student["返回失败：学生不存在"]
-    exist --> |是| find_record["遍历 records 查找年月"]
-    find_record --> record_exist{记录是否存在？}
-    record_exist --> |否| fail_record["返回失败：未找到记录"]
-    record_exist --> |是| update["更新 usage 和 cost"]
-    update --> save["saveToFile()"]
-    save --> query["调用 queryTotalRecord 获取汇总"]
-    query --> success["返回成功：修改记录成功 + 汇总信息"]
+    A["setWaterRecord(id, year, month, usage)"] --> B["findStudentIndex(id)"]
+    B --> C{学生是否存在？}
+    C --> |否| D["返回失败：学生不存在"]
+    C --> |是| E["遍历 records 查找年月"]
+    E --> F{记录是否存在？}
+    F --> |否| G["返回失败：未找到记录"]
+    F --> |是| H["更新 usage 和 cost"]
+    H --> I["saveToFile()"]
+    I --> J["调用 queryTotalRecord 获取汇总"]
+    J --> K["返回成功：修改记录成功 + 汇总信息"]
 ```
 
 ---
@@ -891,15 +891,15 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    start["removeWaterRecord(id, year, month)"] --> find["findStudentIndex(id)"]
-    find --> exist{学生是否存在？}
-    exist --> |否| fail_student["返回失败：学生不存在"]
-    exist --> |是| get_index["getWaterRecordIndex(year, month)"]
-    get_index --> record_exist{记录是否存在？}
-    record_exist --> |否| fail_record["返回失败：未找到记录"]
-    record_exist --> |是| erase["records.erase(records.begin() + index)"]
-    erase --> save["saveToFile()"]
-    save --> success["返回成功：删除成功"]
+    A["removeWaterRecord(id, year, month)"] --> B["findStudentIndex(id)"]
+    B --> C{学生是否存在？}
+    C --> |否| D["返回失败：学生不存在"]
+    C --> |是| E["getWaterRecordIndex(year, month)"]
+    E --> F{记录是否存在？}
+    F --> |否| G["返回失败：未找到记录"]
+    F --> |是| H["records.erase(records.begin() + index)"]
+    H --> I["saveToFile()"]
+    I --> J["返回成功：删除成功"]
 ```
 
 ---
@@ -914,10 +914,10 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    start["getStudent(id)"] --> find["findStudentIndex(id)"]
-    find --> exist{索引是否为 -1？}
-    exist --> |是| return_null["返回 nullptr"]
-    exist --> |否| return_ptr["返回 &students[index]"]
+    A["getStudent(id)"] --> B["findStudentIndex(id)"]
+    B --> C{索引是否为 -1？}
+    C --> |是| D["返回 nullptr"]
+    C --> |否| E["返回 &students[index]"]
 ```
 
 ---
@@ -926,16 +926,16 @@ flowchart LR
 
 本次课程设计我们完成了学生水费管理系统的开发，实现了学生信息管理、水费记录管理、分页显示、数据持久化等功能。系统在 Windows 控制台下运行，支持统一退出指令（`/e`）和完整的输入合法性校验。
 
-**技术收获：**
+**技术收获**
 巩固了 C++ 类与对象、`std::vector`、文件读写、异常处理等知识；掌握了 JSON 数据的序列化与反序列化；通过解决 GBK 与 UTF-8 编码转换问题（“锟斤拷”乱码），加深了对字符编码的理解。
 
-**设计体会：**
+**设计体会**
 将系统划分为 `App`（界面交互）与 `WaterManager`（数据管理）两个核心类，实现了职责分离。分页显示、删除前二次确认、即时保存、文件损坏自动备份等设计，提升了程序的健壮性和用户体验。
 
-**问题解决：**
+**问题解决**
 遇到了三个主要问题：控制台中文乱码、直接关闭窗口导致数据丢失、JSON 文件损坏引发程序崩溃。分别采用编码转换、即时保存、异常捕获加自动备份的方式解决。
 
-**不足与改进：**
+**不足与改进**
 本系统为命令行界面，后续可开发图形界面；数据存储可迁移至 SQLite 以支持更大数据量；可增加多用户权限管理功能。
 
 通过本次课程设计，我们不仅综合运用了所学知识，也经历了一次从需求到实现的完整开发流程。
