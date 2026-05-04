@@ -10,7 +10,7 @@ static bool checkExit(std::string input) {
 
 static bool checkEmpty(std::string input) {
 	if (input.empty())
-		std::cout << "你需要输入一些内容，或输入 /e 取消操作\n";
+		std::cout << "你需要输入一些内容，或输入 /e 取消当前操作\n";
 	return input.empty();
 }
 

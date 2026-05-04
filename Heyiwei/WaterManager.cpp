@@ -7,6 +7,7 @@
 
 using json = nlohmann::json;
 
+// 针对 Visual Studio 2022 C++ 控制台应用的锟铐斤问题的解决方案
 // 控制台应用使用 GBK 中文编码，与 json 保存文件使用的 utf-8 编码不同。需要进行编码转换。
 // 从控制台的 GBK 编码转换为 json 文件的 UTF-8 编码
 std::string gbkToUtf8(const std::string& gbkStr) {
@@ -116,7 +117,7 @@ void WaterManager::loadFromFile()
 	file.seekg(0, std::ios::end); // seekg函数：寻找读取位置，（a，b），a+b即为开始位置
 	if (file.tellg() == 0) // 报告位置
 	{
-		std::cerr << "警告：students.json 内容是空的\n"; // cerr函数:在程序运行出现错误时能够发出报告
+		std::cerr << "警告：students.json 内容是空的。通常不会出现此状况，是否出现过文件保存错误？\n"; // cerr函数:在程序运行出现错误时能够发出报告
 		file.close();
 		return;
 	}
