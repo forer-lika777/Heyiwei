@@ -536,7 +536,7 @@ bool App::enterMonth(int& month) {
 			month = std::stoi(input);
 			if (month >= 1 && month <= 12) break;
 		}
-		catch (...) {
+		catch (const std::exception&) {
 			std::cout << "请输入一个有效数字\n";
 			continue;
 		}
@@ -561,10 +561,17 @@ bool App::enterUsage(double& usage) {
 
 		try {
 			usage = std::stod(input);
-			if (usage < 0) throw;
+			if (usage < 0) {
+				std::cout << "用水量不能为负数\n";
+				continue;
+			}
+			if (usage > 1.38e18) {
+				std::cout << "你为什么又在这乱输数据？\n";
+				continue;
+			}
 			break;
 		}
-		catch (...) {
+		catch (const std::exception&) {
 			std::cout << "你输入的数据不合法\n";
 			continue;
 		}
