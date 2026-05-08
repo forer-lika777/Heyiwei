@@ -509,7 +509,17 @@ flowchart TD
 
 流程图：
 
-未制作
+```mermaid
+flowchart TD
+    A["addWaterRecord(id)"] --> B["创建 WaterRecord record"]
+    B --> C{"enterWaterRecord(record)?"}
+    C --> |失败| D(退出函数)
+    C --> |成功| E["manager.addWaterRecord(id, record)<br/>获取 res"]
+    E --> F["输出 res.info"]
+    F --> G{"promptContinue()?"}
+    G --> |否| D
+    G --> |是| B
+```
 
 演示截图：
 
@@ -553,7 +563,15 @@ flowchart LR
 
 流程图：
 
-未制作
+```mermaid
+flowchart TD
+    A["setName(id)"] --> B["输入 name"]
+    B --> C{"enterName(name)?"}
+    C --> |失败| D(退出函数)
+    C --> |成功| E["manager.setStudent(id, name)<br/>获取 res"]
+    E --> F["输出 res.info"]
+    F --> D
+```
 
 演示截图：
 
@@ -567,7 +585,15 @@ flowchart LR
 
 流程图：
 
-未制作
+```mermaid
+flowchart TD
+    A["setWaterRecord(id, year, month)"] --> B["输入 usage"]
+    B --> C{"enterUsage(usage)?"}
+    C --> |失败| D(退出函数)
+    C --> |成功| E["manager.setWaterRecord(id, year, month, usage)<br/>获取 res"]
+    E --> F["输出 res.info"]
+    F --> D
+```
 
 演示截图：
 
@@ -579,7 +605,16 @@ flowchart LR
 
 流程图：
 
-未制作
+```mermaid
+flowchart TD
+    A["enterStudent(student)"] --> B["输出提示信息"]
+    B --> C{"enterId(id)?"}
+    C --> |失败| D[返回 false]
+    C --> |成功| E{"enterName(name)?"}
+    E --> |失败| D
+    E --> |成功| F["student.id = id<br/>student.name = name"]
+    F --> G[返回 true]
+```
 
 ##### `App.enterId(std::string& id)` 方法
 
@@ -589,7 +624,21 @@ flowchart LR
 
 流程图：
 
-未制作
+```mermaid
+flowchart TD
+    A["enterId(id)"] --> B["输出提示：请输入学号："]
+    B --> C["读取 input"]
+    C --> D{"checkEmpty(input)?"}
+    D --> |是| B
+    D --> |否| E{"checkExit(input)?"}
+    E --> |是| F[返回 false]
+    E --> |否| G["student = manager.getStudent(input)"]
+    G --> H{"student == nullptr?"}
+    H --> |否| I["输出：不可添加具有相同学号的学生"]
+    I --> B
+    H --> |是| J["id = input"]
+    J --> K[返回 true]
+```
 
 ##### `App.enterName(std::string& name)` 方法
 
@@ -599,7 +648,18 @@ flowchart LR
 
 流程图：
 
-未制作
+```mermaid
+flowchart TD
+    A["enterName(name)"] --> B["输出提示：请输入姓名："]
+    B --> C["读取 input"]
+    C --> D{"checkEmpty(input)?"}
+    D --> |是| B
+    D --> |否| E{"checkExit(input)?"}
+    E --> |是| F[返回 false]
+    E --> |否| G["跳出循环"]
+    G --> H["name = input"]
+    H --> I[返回 true]
+```
 
 ##### `App.enterMonth(int& month)` 方法
 
@@ -609,7 +669,24 @@ flowchart LR
 
 流程图：
 
-未制作
+```mermaid
+flowchart TD
+    A["enterMonth(month)"] --> B["输出提示：请输入月份："]
+    B --> C["读取 input"]
+    C --> D{"checkEmpty(input)?"}
+    D --> |是| B
+    D --> |否| E{"checkExit(input)?"}
+    E --> |是| F[返回 false]
+    E --> |否| G["month = stoi(input)"]
+    G --> H{"转换成功?"}
+    H --> |是| I{"month >= 1 && month <= 12?"}
+    I --> |是| J["跳出循环"]
+    I --> |否| K["输出：你输入的月份不合法"]
+    K --> B
+    H --> |否| L["输出：请输入一个有效数字"]
+    L --> B
+    J --> M[返回 true]
+```
 
 ##### `App.enterUsage(double& usage)` 方法
 
@@ -619,7 +696,27 @@ flowchart LR
 
 流程图：
 
-未制作
+```mermaid
+flowchart TD
+    A["enterUsage(usage)"] --> B["输出提示：请输入用水量（吨数）："]
+    B --> C["读取 input"]
+    C --> D{"checkEmpty(input)?"}
+    D --> |是| B
+    D --> |否| E{"checkExit(input)?"}
+    E --> |是| F[返回 false]
+    E --> |否| G["usage = stod(input)"]
+    G --> H{"转换成功?"}
+    H --> |是| I{"usage < 0?"}
+    I --> |是| J["输出：用水量不能为负数"]
+    J --> B
+    I --> |否| K{"usage > 1.38e18?"}
+    K --> |是| L["输出：你为什么又在这乱输数据？"]
+    L --> B
+    K --> |否| M["跳出循环"]
+    H --> |否| N["输出：你输入的数据不合法"]
+    N --> B
+    M --> O[返回 true]
+```
 
 ##### `App.promptContinue()` 方法
 
@@ -629,11 +726,19 @@ flowchart LR
 
 流程图：
 
-未制作
+```mermaid
+flowchart TD
+    A["promptContinue()"] --> B["输出提示信息"]
+    B --> C["读取 input"]
+    C --> D{"checkExit(input)?"}
+    D --> |是| E[返回 false]
+    D --> |否| F[返回 true]
+```
 
 #### WaterManager 类
 
 ##### 概要
+
 
 实现数据管理功能。
 
