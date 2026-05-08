@@ -31,16 +31,16 @@
         - [`App.listAllStudents()` 方法](#applistallstudents-方法)
         - [`App.listAllRecords(const std::string id)` 方法](#applistallrecordsconst-stdstring-id-方法)
         - [`App.operateOnStudent(const std::string id)` 方法](#appoperateonstudentconst-stdstring-id-方法)
-        - [`App.addWaterRecord(const std::string id)`](#appaddwaterrecordconst-stdstring-id)
-        - [`App.operateOnRecord(const std::string id, int year, int month)`](#appoperateonrecordconst-stdstring-id-int-year-int-month)
-        - [`App.setName(const std::string id)`](#appsetnameconst-stdstring-id)
-        - [`App.setWaterRecord(const std::string id, int year, int month)`](#appsetwaterrecordconst-stdstring-id-int-year-int-month)
-        - [`App.enterStudent(Student& student)`](#appenterstudentstudent-student)
-        - [`App.enterId(std::string& id)`](#appenteridstdstring-id)
-        - [`App.enterName(std::string& name)`](#appenternamestdstring-name)
-        - [`App.enterMonth(int& month)`](#appentermonthint-month)
-        - [`App.enterUsage(double& usage)`](#appenterusagedouble-usage)
-        - [`App.promptContinue()`](#apppromptcontinue)
+        - [`App.addWaterRecord(const std::string id)` 方法](#appaddwaterrecordconst-stdstring-id-方法)
+        - [`App.operateOnRecord(const std::string id, int year, int month)` 方法](#appoperateonrecordconst-stdstring-id-int-year-int-month-方法)
+        - [`App.setName(const std::string id)` 方法](#appsetnameconst-stdstring-id-方法)
+        - [`App.setWaterRecord(const std::string id, int year, int month)` 方法](#appsetwaterrecordconst-stdstring-id-int-year-int-month-方法)
+        - [`App.enterStudent(Student& student)` 方法](#appenterstudentstudent-student-方法)
+        - [`App.enterId(std::string& id)` 方法](#appenteridstdstring-id-方法)
+        - [`App.enterName(std::string& name)` 方法](#appenternamestdstring-name-方法)
+        - [`App.enterMonth(int& month)` 方法](#appentermonthint-month-方法)
+        - [`App.enterUsage(double& usage)` 方法](#appenterusagedouble-usage-方法)
+        - [`App.promptContinue()` 方法](#apppromptcontinue-方法)
       - [WaterManager 类](#watermanager-类)
         - [概要](#概要-1)
         - [编码转换辅助函数](#编码转换辅助函数)
@@ -62,15 +62,25 @@
 
 ## 摘要
 
+---
+
 Heyiwei 是一个使用 C++ 编写的学生水费管理系统。  
 
 这是一个控制台应用，用户在终端界面查看信息、输入指令、输入信息，完成基础交互功能。
 
 ## 参与成员
 
-不在此处呈现。请打开 `members.md` 查看。
+---
+
+* 需求分析、结果分析：3125006180汪泽群
+* 流程图设计：3125006182吴溢轩
+* 代码编写：3125006186张顺理、3125006165陈东扬
+* 功能测试：3125006165陈东扬
+* 报告撰写：3125006187竹永琪、3125006186张顺理
 
 ## 需求分析
+
+---
 
 1. **功能需求**
 
@@ -110,9 +120,11 @@ Heyiwei 是一个使用 C++ 编写的学生水费管理系统。
 
 ## 使用说明
 
+---
+
 ### 开发环境
 
-*  Windows 11
+*  Windows 10/11
 
 *  依赖库（nlohmann/json.hpp，单头文件，无需额外安装）
 
@@ -175,6 +187,8 @@ Heyiwei 是一个使用 C++ 编写的学生水费管理系统。
     | `/e` | 返回水费记录列表 |
 
 ## 系统设计
+
+---
 
 ### 学生信息管理
 
@@ -301,7 +315,7 @@ flowchart TD
     };
     ```
 
-	**此处呈现的代码不一定是最终代码，最终代码请翻阅文件查看。*
+    **此处呈现的代码不一定是最终代码，最终代码请翻阅文件查看。*
 
 *  **使用动态数组供运行时修改。**
    使用 `std::vector<Student>` 类型动态储存数据，便于在运行时访问和修改。
@@ -351,12 +365,12 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-	A["App.run()"] --> B[输入标识]
-	B --> |1| C["列出所有学生列表<br/>listAllStudents()"]
-	B --> |2| D["添加学生<br/>addStudent()"]
-	B --> |/e| E[退出函数]
-	B -.-> |其他| F[提示错误]
-	F --> B
+    A["App.run()"] --> B[输入标识]
+    B --> |1| C["列出所有学生列表<br/>listAllStudents()"]
+    B --> |2| D["添加学生<br/>addStudent()"]
+    B --> |/e| E[退出函数]
+    B -.-> |其他| F[提示错误]
+    F --> B
 ```
 
 演示截图：
@@ -391,8 +405,6 @@ flowchart LR
 
 ![add-student](./images/add-student.png)
 
----
-
 ##### `App.listAllStudents()` 方法
 
 类型：`void`
@@ -423,8 +435,6 @@ flowchart TD
 演示截图：
 
 ![list-all-students](./images/list-all-students.png)
-
----
 
 ##### `App.listAllRecords(const std::string id)` 方法
 
@@ -491,9 +501,7 @@ flowchart TD
 
 ![operate-on-student](./images/operate-on-student.png)
 
----
-
-##### `App.addWaterRecord(const std::string id)`
+##### `App.addWaterRecord(const std::string id)` 方法
 
 类型：`void`
 
@@ -507,9 +515,7 @@ flowchart TD
 
 ![add-water-record](./images/add-water-record.png)
 
----
-
-##### `App.operateOnRecord(const std::string id, int year, int month)`
+##### `App.operateOnRecord(const std::string id, int year, int month)` 方法
 
 类型：`void`
 
@@ -518,7 +524,7 @@ flowchart TD
 流程图：
 
 ```mermaid
-flowchart TD
+flowchart LR
     A["operateOnRecord(id,<br/> year, month)"] --> B{检查学号和水费<br/>记录是否存在}
 
     B --> |不存在| C(退出函数)
@@ -539,9 +545,7 @@ flowchart TD
 
 ![operate-on-record](./images/operate-on-record.png)
 
----
-
-##### `App.setName(const std::string id)`
+##### `App.setName(const std::string id)` 方法
 
 类型：`void`
 
@@ -555,9 +559,7 @@ flowchart TD
 
 ![set-name](./images/set-name.png)
 
----
-
-##### `App.setWaterRecord(const std::string id, int year, int month)`
+##### `App.setWaterRecord(const std::string id, int year, int month)` 方法
 
 类型：`void`
 
@@ -571,9 +573,7 @@ flowchart TD
 
 ![set-record](./images/set-record.png)
 
----
-
-##### `App.enterStudent(Student& student)`
+##### `App.enterStudent(Student& student)` 方法
 
 类型：`bool`
 
@@ -581,9 +581,7 @@ flowchart TD
 
 未制作
 
----
-
-##### `App.enterId(std::string& id)`
+##### `App.enterId(std::string& id)` 方法
 
 类型：`bool`
 
@@ -593,9 +591,7 @@ flowchart TD
 
 未制作
 
----
-
-##### `App.enterName(std::string& name)`
+##### `App.enterName(std::string& name)` 方法
 
 类型：`bool`
 
@@ -605,9 +601,7 @@ flowchart TD
 
 未制作
 
----
-
-##### `App.enterMonth(int& month)`
+##### `App.enterMonth(int& month)` 方法
 
 类型：`bool`
 
@@ -617,9 +611,7 @@ flowchart TD
 
 未制作
 
----
-
-##### `App.enterUsage(double& usage)`
+##### `App.enterUsage(double& usage)` 方法
 
 类型：`bool`
 
@@ -629,9 +621,7 @@ flowchart TD
 
 未制作
 
----
-
-##### `App.promptContinue()`
+##### `App.promptContinue()` 方法
 
 类型：`bool`
 
@@ -640,8 +630,6 @@ flowchart TD
 流程图：
 
 未制作
-
----
 
 #### WaterManager 类
 
@@ -658,13 +646,9 @@ std::string gbkToUtf8(const std::string& gbkStr);   // GBK → UTF-8（保存时
 std::string utf8ToGbk(const std::string& utf8Str);  // UTF-8 → GBK（加载时使用）
 ```
 
----
-
 ##### JSON 序列化/反序列化
 
 使用 `nlohmann/json` 库，为 `WaterRecord` 和 `Student` 定义了 `to_json` 和 `from_json` 重载：
-
----
 
 ##### `WaterManager()` 构造函数
 
@@ -680,8 +664,6 @@ flowchart LR
     B --> C["初始化完成"]
 ```
 
----
-
 ##### `~WaterManager()` 析构函数
 
 类型：无
@@ -695,8 +677,6 @@ flowchart LR
     A["~WaterManager()"] --> B["saveToFile()"]
     B --> C["程序退出，数据已保存"]
 ```
-
----
 
 ##### `WaterManager.loadFromFile()` 方法
 
@@ -729,8 +709,6 @@ flowchart LR
 
 ```
 
----
-
 ##### `WaterManager.saveToFile()` 方法
 
 类型：`void`
@@ -747,8 +725,6 @@ flowchart LR
     D --> E["关闭文件"]
     E --> F["退出"]
 ```
-
----
 
 ##### `WaterManager.findStudentIndex(const std::string& id)` 方法
 
@@ -768,8 +744,6 @@ flowchart LR
     F --> |否| B
     F --> |是| G["返回 -1"]
 ```
-
----
 
 ##### `WaterManager.addStudent(Student student)` 方法
 
@@ -792,8 +766,6 @@ flowchart LR
     E --> C
 ```
 
----
-
 ##### `WaterManager.setStudent(const std::string& id, const std::string& name)` 方法
 
 类型：`result`
@@ -812,8 +784,6 @@ flowchart LR
     F --> G["返回成功：显示新旧姓名"]
 ```
 
----
-
 ##### `WaterManager.removeStudent(const std::string& id)` 方法
 
 类型：`result`
@@ -831,8 +801,6 @@ flowchart LR
     E --> F["saveToFile()"]
     F --> G["返回成功：删除成功"]
 ```
-
----
 
 ##### `WaterManager.addWaterRecord(const std::string& id, const WaterRecord& record)` 方法
 
@@ -854,8 +822,6 @@ flowchart LR
     H --> I["saveToFile()"]
     I --> J["返回成功：显示添加的记录详情"]
 ```
-
----
 
 ##### `WaterManager.setWaterRecord(const std::string& id, int year, int month, double usage)` 方法
 
@@ -879,8 +845,6 @@ flowchart LR
     J --> K["返回成功：修改记录成功 + 汇总信息"]
 ```
 
----
-
 ##### `WaterManager.removeWaterRecord(const std::string& id, int year, int month)` 方法
 
 类型：`result`
@@ -902,8 +866,6 @@ flowchart LR
     I --> J["返回成功：删除成功"]
 ```
 
----
-
 ##### `WaterManager.getStudent(const std::string& id)` 方法
 
 类型：`Student*`
@@ -920,14 +882,14 @@ flowchart LR
     C --> |否| E["返回 &students[index]"]
 ```
 
----
-
 ## 总结
+
+---
 
 本次课程设计我们完成了学生水费管理系统的开发，实现了学生信息管理、水费记录管理、分页显示、数据持久化等功能。系统在 Windows 控制台下运行，支持统一退出指令（`/e`）和完整的输入合法性校验。
 
 **技术收获**
-巩固了 C++ 类与对象、`std::vector`、文件读写、异常处理等知识；掌握了 JSON 数据的序列化与反序列化；通过解决 GBK 与 UTF-8 编码转换问题（“锟斤拷”乱码），加深了对字符编码的理解。
+巩固了 C++ 类与对象、动态数组、指针与引用、文件读写、异常处理等基础编程知识。
 
 **设计体会**
 将系统划分为 `App`（界面交互）与 `WaterManager`（数据管理）两个核心类，实现了职责分离。分页显示、删除前二次确认、即时保存、文件损坏自动备份等设计，提升了程序的健壮性和用户体验。
@@ -941,6 +903,8 @@ flowchart LR
 通过本次课程设计，我们不仅综合运用了所学知识，也经历了一次从需求到实现的完整开发流程。
 
 ## 另请参阅
+
+---
 
 [本项目的 Github 仓库 | forer-lika777/Heyiwei](https://github.com/forer-lika777/Heyiwei "https://github.com/forer-lika777/Heyiwei")  
 [c++中utf8字符串和gbk字符串的转换-腾讯云开发者社区-腾讯云](https://cloud.tencent.com/developer/article/2476960 "https://cloud.tencent.com/developer/article/2476960")  
